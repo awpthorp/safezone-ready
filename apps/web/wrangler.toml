@@ -4,3 +4,14 @@ compatibility_date = "2026-09-01"
 
 [vars]
 ENVIRONMENT = "local"
+APP_ORIGIN = "http://127.0.0.1:43173"
+
+[env.staging]
+[env.staging.vars]
+ENVIRONMENT = "staging"
+APP_ORIGIN = "https://staging.safezoneready.com"
+
+[env.production]
+[env.production.vars]
+ENVIRONMENT = "production"
+APP_ORIGIN = "https://safezoneready.com"

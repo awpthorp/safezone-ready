@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   estimateRegionOccupancy,
   gradeFromScore,
+  parsePlatformSearch,
   scoreCreative,
   scorePlacement,
 } from "../src/index";
@@ -88,6 +89,15 @@ describe("scoreCreative", () => {
 
   it("rejects non-positive dimensions", () => {
     expect(() => scoreCreative({ width: 0, height: 100 })).toThrow(/positive/);
+  });
+});
+
+describe("platform deep link", () => {
+  it("maps metasafezone ?platform=meta to Meta Reels", () => {
+    expect(parsePlatformSearch("?platform=meta")).toBe("meta_reels");
+    expect(parsePlatformSearch("platform=stories")).toBe("meta_stories");
+    expect(parsePlatformSearch("?platform=youtube")).toBe("youtube_shorts");
+    expect(parsePlatformSearch("")).toBe("combined");
   });
 });
 

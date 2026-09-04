@@ -21,3 +21,9 @@ npx wrangler queues create szr-fix-jobs
 
 Set secrets with `npx wrangler secret put NAME --config apps/api/wrangler.toml`.
 Do not put production values in git.
+
+## Domains
+
+- Mothership: `safezoneready.com` (Pages + `/api/*`).
+- Satellite: `metasafezone.com` is **redirect-only**. See [`redirects.md`](./redirects.md) and [`metasafezone-bulk-redirects.json`](./metasafezone-bulk-redirects.json).
+- Do not attach `metasafezone.com` to this Pages project.

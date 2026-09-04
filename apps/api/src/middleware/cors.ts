@@ -1,17 +1,11 @@
 import type { Context, Next } from "hono";
 import type { ApiEnv } from "../env";
-
-function allowedOrigins(env: ApiEnv): string[] {
-  return [
-    env.APP_ORIGIN,
-    "http://127.0.0.1:43173",
-    "http://localhost:43173",
-  ].filter(Boolean);
-}
+import { allowedOrigins } from "../origins";
 
 export async function corsGuard(c: Context<{ Bindings: ApiEnv }>, next: Next) {
   const origin = c.req.header("Origin");
-  const allow = origin && allowedOrigins(c.env).includes(origin) ? origin : allowedOrigins(c.env)[0];
+  const allowlist = allowedOrigins(c.env.APP_ORIGIN);
+  const allow = origin && allowlist.includes(origin) ? origin : allowlist[0];
   if (c.req.method === "OPTIONS") {
     return new Response(null, {
       status: 204,

@@ -24,13 +24,15 @@ The free wedge is unlimited **local** overlay checking (no upload). The paid wed
 
 Vertical ads are covered by platform chrome (profile rows, captions, CTAs, engagement rails). Offer text and logos routinely sit under that chrome. Existing help-centre overlays are scattered, placement-specific, and easy to ignore in a rush. Safe Zone Ready makes the collision obvious in one pass, then offers a mechanical fix without sending the buyer into Ads Manager, Figma, or a video editor.
 
-### 1.3 Working brand and domains
+### 1.3 Brand and domains (decided 4 September 2026)
 
-- **Code, repo, packages, Wrangler names:** `safezone-ready` / `Safe Zone Ready`.
-- **Mothership domain (open decision):** `safezoneready.com` **or** `isitreadyforads.com`. Do not hard-code a public brand URL until Alex picks one. Use relative paths and `PUBLIC_APP_ORIGIN` / `APP_ORIGIN`.
-- **Registrar:** Cloudflare Registrar (pending purchase). DNS, TLS, and Pages custom domains stay on Cloudflare.
-- **SEO satellites:** the unused candidate becomes a 301/308 to the mothership. Optional later: `www` and regional hosts also redirect. See §13.7.
+- **Product name (everywhere):** Safe Zone Ready. Code and Wrangler names stay `safezone-ready`.
+- **Mothership (primary brand, purchased):** [safezoneready.com](https://safezoneready.com) on Cloudflare Registrar. Canonical host is the apex. `www.safezoneready.com` 301s to the apex.
+- **Meta SEO satellite (purchased):** [metasafezone.com](https://metasafezone.com) (and `www`) **301s to** `https://safezoneready.com/?platform=meta`. It must not serve a second copy of the app. See §13.7 and `infra/redirects.md`.
+- **Not purchased:** do not assume `isitreadyforads.com` or any other satellite exists. Do not buy or wire them until Alex says so.
+- **Env:** `APP_ORIGIN=https://safezoneready.com` in production. Local remains `http://127.0.0.1:43173`.
 - **Not Posterly:** this is a **separate private product** with a soft upsell link to [poster.ly](https://poster.ly) after a successful download. It must never live inside `awpthorp/posterly` or share that repo’s deploy, secrets, or domain.
+- **Trademark caution:** `metasafezone.com` is an SEO satellite only. On-page copy on the mothership must still say we are not affiliated with Meta. Do not brand the product “Meta Safe Zone”.
 
 ### 1.4 Ideal customer profile (ICP)
 
@@ -135,9 +137,9 @@ All journeys below are normative for UX copy and API gates.
 
 ### 3.1 Anon: local check (no account)
 
-1. Visitor lands on `/`.
+1. Visitor lands on `https://safezoneready.com/` (or is 301'd from `metasafezone.com` to `/?platform=meta`).
 2. They drop or pick a PNG / JPEG / WebP. The file stays in browser memory (`FileReader` → `Image` → canvas). **No upload.**
-3. Default view: **strictest combined** overlay on the preview, plus per-platform score cards.
+3. Default view: **strictest combined** overlay, unless `?platform=meta` (Meta Reels selected), `youtube`, or `tiktok`. Per-platform score cards stay visible.
 4. They toggle Meta Stories, Reels, Feed 1:1, Feed 4:5, YouTube Shorts, TikTok.
 5. Scores update instantly from `@safezone-ready/safezone-specs`.
 6. Empty state: dashed drop zone and a one-line explanation.
@@ -697,10 +699,10 @@ Key stays in Worker secrets. Timeouts: 55s budget per model call; job `timeout` 
 ### 10.1 Google OAuth
 
 - Scopes: `openid email profile`. Nothing YouTube, Drive, or Ads.
-- App type: Web. Redirect `https://api.<mothership>/api/auth/callback` (and `http://localhost:8787/api/auth/callback` in dev).
+- App type: Web. Redirect `https://safezoneready.com/api/auth/callback` (and `http://127.0.0.1:8787/api/auth/callback` in local).
 - State + PKCE (`S256`).
-- Session cookie: `__Host-szr_session` when on HTTPS apex/API host; in local HTTP use `szr_session` without `__Host-`.
-- `SameSite=None; Secure` only if web and API are truly cross-site. Prefer a **same-site** design: Pages on `app.example` and API on `api.example` is cross-subdomain, so use `Domain=.example` + `SameSite=Lax` **or** mount the API under `https://example.com/api/*` via Cloudflare route so the cookie is first-party. **Preferred MVP:** route `https://<mothership>/api/*` to the API Worker, Pages for everything else. Then one site, Lax cookies.
+- Session cookie: `__Host-szr_session` on `https://safezoneready.com`; in local HTTP use `szr_session` without `__Host-`.
+- Prefer first-party cookies: route `https://safezoneready.com/api/*` to the API Worker, Pages for everything else, `SameSite=Lax`. Do not set cookies on `metasafezone.com`.
 
 ### 10.2 Stripe
 
@@ -804,31 +806,48 @@ If the Origin remote is the only git host, keep the workflow file anyway so a la
 | Env | Pages | Workers | D1 / R2 / Queue | Stripe | Gemini |
 | --- | --- | --- | --- | --- | --- |
 | `local` | Vite `:43173` | `wrangler dev` `:8787` | miniflare | test keys optional | mock or test key |
-| `staging` | `staging.<mothership>` | `api-staging...` | isolated | test mode | cheap models, low cap |
-| `production` | apex + `www` | `api.` or `/api` | isolated | live RAK | live, burn alert on |
+| `staging` | `staging.safezoneready.com` | `/api` on staging host | isolated | test mode | cheap models, low cap |
+| `production` | `safezoneready.com` + `www` 301 | `/api` on apex (preferred) | isolated | live RAK | live, burn alert on |
 
 ### 13.5 Secrets (names only in git)
 
 See `.env.example`. Set via `wrangler secret put` per env. Never commit values. Never paste live keys into issues.
 
-### 13.6 Domain wiring (when Alex buys the name)
+### 13.6 Domain wiring (purchased)
 
-1. Buy on Cloudflare Registrar (`safezoneready.com` or `isitreadyforads.com`).
-2. Pages custom domain: apex + `www`.
-3. Worker route: `https://<mothership>/api/*` (preferred) **or** `api.<mothership>/*`.
-4. Turnstile widget bound to both apex and `www` and localhost.
-5. Google OAuth authorised origins and redirect URIs.
-6. Stripe Checkout success/cancel URLs and webhook URL `https://<mothership>/api/webhooks/stripe`.
-7. CAA / email: not required for MVP unless we send mail (we do not).
+Zones on Cloudflare Registrar (4 September 2026):
+
+| Zone | Role |
+| --- | --- |
+| `safezoneready.com` | Mothership. Pages + `/api/*` Worker route. |
+| `metasafezone.com` | Meta SEO satellite. Redirect-only. No Pages project, no cookies, no API. |
+
+Steps (staging first, then production):
+
+1. Pages custom domains: `safezoneready.com` and `www.safezoneready.com` (www 301 to apex; see `infra/redirects.md`).
+2. Worker route: `safezoneready.com/api/*` (preferred, first-party cookies). Optional later: `api.safezoneready.com/*`.
+3. Staging host: `staging.safezoneready.com` (separate Pages alias + Worker env).
+4. Turnstile widget hostnames: `safezoneready.com`, `www.safezoneready.com`, `staging.safezoneready.com`, `localhost`.
+5. Google OAuth authorised JavaScript origins: the three HTTPS hosts above plus local. Redirect URI: `https://safezoneready.com/api/auth/callback`.
+6. Stripe success/cancel: `https://safezoneready.com/` and `https://safezoneready.com/?checkout=cancel`. Webhook: `https://safezoneready.com/api/webhooks/stripe`.
+7. Do **not** add `metasafezone.com` to OAuth, Stripe, Turnstile, CORS, or cookie Domain.
+8. CAA / email: not required for MVP unless we send mail (we do not).
 
 ### 13.7 SEO satellite redirects
 
-Until the mothership is chosen, do not buy both for “parking SEO”. When chosen:
+**Purchased satellite:** `metasafezone.com` (apex + `www`).
 
-- Losing candidate: 308 to `https://<mothership>/` preserve path off.
-- Optional: `isitreadyforads.com/check` → mothership `/` if that brand is the satellite.
-- One canonical `<link rel="canonical">` on Pages.
-- Do not dual-host the app on two apexes (cookie and SEO split).
+Normative behaviour:
+
+1. Every request on `metasafezone.com` or `www.metasafezone.com` returns **301** to the mothership. Do not 302 in production (SEO).
+2. Default target: `https://safezoneready.com/?platform=meta`.
+3. If the satellite request has a path, send `https://safezoneready.com{path}?platform=meta` (append `&platform=meta` when a query string already exists). Drop satellite-only paths that do not exist on the mothership onto `/?platform=meta`.
+4. The mothership reads `?platform=meta` and selects the Meta Reels overlay (Stories / Feed still listed). This is a deep link, not a second product.
+5. `<link rel="canonical" href="https://safezoneready.com/">` on Pages. One indexable origin only.
+6. Do not dual-host the React app on the satellite (cookie split, duplicate titles, thin-content risk, and a fake “Meta Safe Zone” brand).
+7. **Not purchased:** `isitreadyforads.com` and any other keyword domains. Do not document them as live. If Alex buys more later, clone this 301 pattern with a matching `?platform=` value (`youtube`, `tiktok`).
+
+Implementation notes live in [`infra/redirects.md`](../infra/redirects.md). Apply as Cloudflare Redirect Rules on the `metasafezone.com` zone (Bulk Redirect list is fine). Pages `_redirects` on the mothership only handles `www` → apex.
 
 ### 13.8 Cloudflare vs GitHub Pages vs Vercel
 
@@ -913,7 +932,7 @@ There is no `/api/gemini`. There is no browser `VITE_GEMINI`. Web env may only c
 
 ### 14.9 CORS
 
-Allowlist `APP_ORIGIN` and `http://127.0.0.1:43173` / `http://localhost:43173`. No `*`. Credentials yes if cookie cross-subdomain; prefer same-origin `/api`.
+Allowlist only: `https://safezoneready.com`, `https://www.safezoneready.com`, `https://staging.safezoneready.com`, `http://127.0.0.1:43173`, `http://localhost:43173`, plus `APP_ORIGIN` if it is one of those. No `*`. Do not allow `metasafezone.com` (redirect-only). Credentials yes if ever cross-subdomain; prefer same-origin `/api` on the mothership.
 
 ### 14.10 Kill switch and burn
 
@@ -990,8 +1009,10 @@ Full Privacy Policy and Terms are **Alex + counsel**. Do not invent a company nu
 
 ### Phase 3: domain and launch
 
-- [ ] Alex buys mothership on Cloudflare Registrar
-- [ ] Satellite 308 if the other name is purchased
+- [x] Mothership purchased: `safezoneready.com`
+- [x] Meta satellite purchased: `metasafezone.com` (301 + `?platform=meta`; see `infra/redirects.md`)
+- [ ] Attach Pages custom domains and `/api/*` route on the mothership
+- [ ] Apply satellite Redirect Rules in the `metasafezone.com` zone
 - [ ] Legal pages
 - [ ] Soft launch, no fabricated metrics
 
@@ -1009,7 +1030,7 @@ Full Privacy Policy and Terms are **Alex + counsel**. Do not invent a company nu
 
 ## 18. Open decisions for Alex
 
-1. **Mothership domain:** `safezoneready.com` vs `isitreadyforads.com`.
+1. **Domains (decided 4 Sep 2026):** mothership `safezoneready.com`; Meta satellite `metasafezone.com` 301s with `?platform=meta`. Other satellites are **not** purchased. Revisit only if Alex buys another name.
 2. **Confirm SKUs:** £9/20 and £29/80 are hypotheses. Currency. Whether credits expire.
 3. **Legal entity** and who is the data controller. Counsel for Terms / Privacy.
 4. **Stripe Tax** registrations before enabling automatic tax.

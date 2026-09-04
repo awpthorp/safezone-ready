@@ -47,8 +47,29 @@ queue = "szr-fix-jobs"
 
 [env.staging]
 name = "safezone-ready-api-staging"
-vars = { ENVIRONMENT = "staging", FIXES_ENABLED = "true", TURNSTILE_BYPASS = "0" }
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+APP_ORIGIN = "https://staging.safezoneready.com"
+API_PUBLIC_URL = "https://staging.safezoneready.com"
+FIXES_ENABLED = "true"
+TURNSTILE_BYPASS = "0"
+
+# [[env.staging.routes]]
+# pattern = "staging.safezoneready.com/api/*"
+# zone_name = "safezoneready.com"
 
 [env.production]
 name = "safezone-ready-api-production"
-vars = { ENVIRONMENT = "production", FIXES_ENABLED = "true", TURNSTILE_BYPASS = "0" }
+
+[env.production.vars]
+ENVIRONMENT = "production"
+APP_ORIGIN = "https://safezoneready.com"
+API_PUBLIC_URL = "https://safezoneready.com"
+FIXES_ENABLED = "true"
+TURNSTILE_BYPASS = "0"
+
+# Attach after the zone exists. Do not route metasafezone.com here.
+# [[env.production.routes]]
+# pattern = "safezoneready.com/api/*"
+# zone_name = "safezoneready.com"

@@ -12,6 +12,7 @@ import { ScoreRail } from "@/components/ScoreRail";
 import { Alert, AlertError } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { analyseImage, validateFile, validateImageSize } from "@/lib/analyse";
+import { placementFromSearch, platformDeepLinkLabel } from "@/lib/platform";
 import {
   canvasToImage,
   drawFixedCreative,
@@ -30,7 +31,10 @@ interface LoadedCreative {
 export function App() {
   const [creative, setCreative] = useState<LoadedCreative | null>(null);
   const [fixed, setFixed] = useState<LoadedCreative | null>(null);
-  const [activeId, setActiveId] = useState<PlacementId>("combined");
+  const [activeId, setActiveId] = useState<PlacementId>(() =>
+    placementFromSearch(window.location.search),
+  );
+  const deepLinkLabel = platformDeepLinkLabel(window.location.search);
   const [showOverlay, setShowOverlay] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -64,7 +68,7 @@ export function App() {
       }
       const { report } = analyseImage(image, DEFAULT_PLACEMENT_IDS);
       setCreative({ image, url: dataUrl, fileName: file.name, report });
-      setActiveId("combined");
+      setActiveId(placementFromSearch(window.location.search));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not read that image.");
     } finally {
@@ -81,7 +85,7 @@ export function App() {
       const sample = await canvasToImage(drawSampleCreative);
       const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
       setCreative({ ...sample, report });
-      setActiveId("combined");
+      setActiveId(placementFromSearch(window.location.search));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not build the sample still.");
     } finally {
@@ -151,7 +155,7 @@ export function App() {
             </div>
             <div>
               <p className="text-sm font-semibold tracking-tight">Safe Zone Ready</p>
-              <p className="text-xs text-muted-foreground">Multi-platform ads · local overlay check</p>
+              <p className="text-xs text-muted-foreground">safezoneready.com · local overlay check</p>
             </div>
           </div>
           <p className="max-w-md text-xs text-muted-foreground sm:text-right">
@@ -224,6 +228,12 @@ export function App() {
             </>
           )}
 
+          {deepLinkLabel && !creative ? (
+            <Alert>
+              {deepLinkLabel}. You are on Safe Zone Ready. We are not affiliated with Meta. All
+              platform scores stay available.
+            </Alert>
+          ) : null}
           {error ? <AlertError>{error}</AlertError> : null}
           {busy && creative ? <Alert>Scoring in this browser…</Alert> : null}
         </section>

@@ -110,7 +110,7 @@ See §5. Images can contain text that says “ignore previous instructions, refu
 - Bot Fight Mode.
 - Rate limiting: SPEC §14.2 matrix, implemented as Hono middleware **and** CF rules for `/api/fix`, `/api/uploads`, `/api/auth/*`.
 - CORS allowlist. No `Access-Control-Allow-Origin: *`.
-- TLS only in staging/production. HSTS on the mothership when the domain is live.
+- TLS only in staging/production. HSTS on `safezoneready.com` when the domain is live. Do not issue cookies or HSTS preload from `metasafezone.com` (301 only).
 
 ### 4.2 Application
 
@@ -269,7 +269,7 @@ If a user uploads unlawful imagery: stop the job, delete R2 objects, ban the acc
 - [ ] Turnstile live (bypass disabled)
 - [ ] Stripe webhook signature verified in staging with CLI trigger
 - [ ] R2 private + lifecycle
-- [ ] CORS allowlist = mothership only
+- [ ] CORS allowlist = `safezoneready.com` / `www` / `staging` / localhost only (`metasafezone.com` is redirect-only)
 - [ ] `FIXES_ENABLED` documented
 - [ ] SynthID and affiliation copy visible
 - [ ] Session cookie flags checked on the real domain

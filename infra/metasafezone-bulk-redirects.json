@@ -1,0 +1,34 @@
+{
+  "name": "szr-meta-satellite",
+  "description": "301 metasafezone.com (apex + www) to safezoneready.com with platform=meta. Attach this Bulk Redirect list to the metasafezone.com zone only. Do not attach the hostname to Pages.",
+  "items": [
+    {
+      "source": "https://metasafezone.com/",
+      "destination": "https://safezoneready.com/?platform=meta",
+      "status": 301,
+      "preserve_query_string": false,
+      "include_subpath": false
+    },
+    {
+      "source": "https://www.metasafezone.com/",
+      "destination": "https://safezoneready.com/?platform=meta",
+      "status": 301,
+      "preserve_query_string": false,
+      "include_subpath": false
+    },
+    {
+      "source": "https://metasafezone.com/*",
+      "destination": "https://safezoneready.com/:splat?platform=meta",
+      "status": 301,
+      "preserve_query_string": true,
+      "include_subpath": true
+    },
+    {
+      "source": "https://www.metasafezone.com/*",
+      "destination": "https://safezoneready.com/:splat?platform=meta",
+      "status": 301,
+      "preserve_query_string": true,
+      "include_subpath": true
+    }
+  ]
+}

@@ -11,9 +11,11 @@ const app = new Hono<{ Bindings: ApiEnv }>();
 app.use("*", corsGuard);
 
 app.get("/api/health", rateLimit({ limit: 60, windowMs: 60_000, key: "ip" }), (c) => {
-  return c.json({
+    return c.json({
     ok: true,
     service: "safezone-ready-api",
+    product: "Safe Zone Ready",
+    mothership: "https://safezoneready.com",
     environment: c.env.ENVIRONMENT,
     fixesEnabled: fixesEnabled(c.env),
     models: {
