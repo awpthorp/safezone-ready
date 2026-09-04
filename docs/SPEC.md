@@ -197,17 +197,17 @@ If verify cannot attest must-keep text after flash, Pro, and pad fallback:
 
 ---
 
-## 4. Monetisation SKUs (hypotheses)
+## 4. Monetisation SKUs
 
-All prices below are **hypotheses**. Do not print them as fact in marketing until Alex confirms. Stripe Product / Price IDs are environment secrets, not literals in UI copy if we can avoid it.
+Stripe Product / Price IDs are environment secrets. Do not print pack prices as a promise in ads until Alex creates the Stripe Prices. Working recommendation after Gemini list-price maths (4 Sep 2026): **keep £9 / 20 and £29 / 80**. Full worksheet: [`docs/PRICING.md`](./PRICING.md).
 
 Complimentary grant is **not** a Stripe SKU.
 
-| SKU code | Hypothesis price | Credits | Implied £ / fix | Notes |
+| SKU code | Working price | Credits | Implied £ / fix | Notes |
 | --- | --- | --- | --- | --- |
-| `welcome` | £0 | 2 | £0 | Once per Google account. |
-| `pack_starter` | **£9** | 20 | £0.45 | Hypothesis. Working name “Starter pack”. |
-| `pack_studio` | **£29** | 80 | £0.36 | Hypothesis. Working name “Studio pack”. |
+| `welcome` | £0 | 2 | £0 | Once per Google account. Worst-case Gemini ~$0.50 if both escalate. |
+| `pack_starter` | **£9** | 20 | £0.45 | Recommended. Covers Flash 1K (~£0.06) and a Pro escalation (~£0.18). |
+| `pack_studio` | **£29** | 80 | £0.36 | Recommended. Same unit economics, slight volume discount. |
 | `pack_burst` | *unset* | *unset* | n/a | Optional later. Do not implement a third pack in MVP unless Alex asks. |
 
 **Currency:** GBP primary. Enable Stripe Adaptive Pricing or additional Price objects for USD only after Alex decides. Do not guess FX.
@@ -218,7 +218,14 @@ Complimentary grant is **not** a Stripe SKU.
 
 **Not sold in MVP:** subscriptions, seats, “unlimited fixes”, priority queue, or removing SynthID.
 
-**Unit economics (planning only, not a forecast):** Gemini image edit cost varies by model and resolution. Price packs so that **one Pro escalation + flash + OCR** still leaves margin at the starter implied £/fix. Re-check Google list prices before launch. Do not fabricate volumes or conversion rates.
+**Unit economics (planning only, not a forecast).** Official Gemini Developer API paid tier (4 Sep 2026):
+
+- Flash Image output: **$0.067 / 1K**, $0.101 / 2K, $0.151 / 4K.
+- Pro Image output: **$0.134 / 1K or 2K**, $0.24 / 4K.
+- Happy-path job (text analyse + one 1K Flash edit + text verify): about **$0.08 / £0.06**.
+- Flash + one Pro: about **$0.22–0.25 / £0.17–0.19**.
+
+Default `GEMINI_IMAGE_SIZE=1K`. Do not ship 4K. Analyse and verify must not request a second generated image. Re-check [ai.google.dev/gemini-api/docs/pricing](https://ai.google.dev/gemini-api/docs/pricing) before creating Stripe Prices. Do not fabricate volumes.
 
 **Checkout implementation (normative):**
 
@@ -1031,7 +1038,7 @@ Full Privacy Policy and Terms are **Alex + counsel**. Do not invent a company nu
 ## 18. Open decisions for Alex
 
 1. **Domains (decided 4 Sep 2026):** mothership `safezoneready.com`; Meta satellite `metasafezone.com` 301s with `?platform=meta`. Other satellites are **not** purchased. Revisit only if Alex buys another name.
-2. **Confirm SKUs:** £9/20 and £29/80 are hypotheses. Currency. Whether credits expire.
+2. **SKUs:** recommended £9/20 and £29/80 from Gemini list prices (`docs/PRICING.md`). Still confirm currency, VAT, and whether credits expire.
 3. **Legal entity** and who is the data controller. Counsel for Terms / Privacy.
 4. **Stripe Tax** registrations before enabling automatic tax.
 5. **GitHub mirror:** Origin-only, or private GitHub for Actions, still no Vercel.

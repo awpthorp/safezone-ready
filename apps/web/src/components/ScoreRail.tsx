@@ -83,9 +83,9 @@ function ScoreRow({
           {placement.occupancyPenalty > 0 ? ` · ink in chrome ${placement.occupancyPenalty}` : ""}
         </p>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex shrink-0 items-center gap-2">
         <Badge variant={GRADE_VARIANT[placement.grade]}>{GRADE_LABEL[placement.grade]}</Badge>
-        <span className="font-mono text-sm">{placement.score}</span>
+        <span className="w-8 shrink-0 text-right font-mono text-sm tabular-nums">{placement.score}</span>
       </div>
     </button>
   );

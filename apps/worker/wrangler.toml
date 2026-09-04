@@ -7,6 +7,7 @@ compatibility_flags = ["nodejs_compat"]
 ENVIRONMENT = "local"
 GEMINI_MODEL_PRIMARY = "gemini-3.1-flash-image"
 GEMINI_MODEL_ESCALATION = "gemini-3-pro-image"
+GEMINI_IMAGE_SIZE = "1K"
 GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/interactions"
 FIXES_ENABLED = "true"
 
@@ -30,6 +31,28 @@ max_retries = 2
 
 [env.staging]
 name = "safezone-ready-worker-staging"
+
+[env.staging.vars]
+ENVIRONMENT = "staging"
+GEMINI_MODEL_PRIMARY = "gemini-3.1-flash-image"
+GEMINI_MODEL_ESCALATION = "gemini-3-pro-image"
+GEMINI_IMAGE_SIZE = "1K"
+FIXES_ENABLED = "true"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "safezone-ready-staging"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "../../infra/migrations"
+
+[[env.staging.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "szr-assets-staging"
+
+[[env.staging.queues.consumers]]
+queue = "szr-fix-jobs-staging"
+max_batch_size = 1
+max_retries = 2
 
 [env.production]
 name = "safezone-ready-worker-production"

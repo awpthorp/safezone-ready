@@ -31,10 +31,14 @@ export function OverlayCanvas({ image, placementId, showOverlay }: OverlayCanvas
       return;
     }
 
-    const overlay = getOverlay(placementId, canvas.width, canvas.height);
-    paintDanger(ctx, overlay);
-    paintSafe(ctx, overlay);
-    paintChrome(ctx, overlay, placementId);
+    try {
+      const overlay = getOverlay(placementId, canvas.width, canvas.height);
+      paintDanger(ctx, overlay);
+      paintSafe(ctx, overlay);
+      paintChrome(ctx, overlay, placementId);
+    } catch (err) {
+      console.error("overlay paint failed", err);
+    }
   }, [image, placementId, showOverlay]);
 
   return (
@@ -77,10 +81,8 @@ function paintChrome(ctx: CanvasRenderingContext2D, overlay: OverlaySpec, placem
   ctx.font = `600 ${Math.max(10, Math.round(w * 0.032))}px "DM Sans", sans-serif`;
 
   if (placementId.startsWith("meta") || placementId === "combined" || placementId === "tiktok_infeed") {
-    ctx.beginPath();
     ctx.fillStyle = "rgba(0,0,0,0.45)";
-    ctx.roundRect(w * 0.04, h * 0.025, w * 0.42, h * 0.045, 999);
-    ctx.fill();
+    ctx.fillRect(w * 0.04, h * 0.025, w * 0.42, h * 0.045);
     ctx.fillStyle = "rgba(255,255,255,0.9)";
     ctx.fillText("sponsored", w * 0.12, h * 0.055);
   }

@@ -5,7 +5,7 @@ import {
   type ScoreReport,
 } from "@safezone-ready/safezone-specs";
 import { ShieldCheck, Upload } from "lucide-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { FixPanel, type FixPhase } from "@/components/FixPanel";
 import { OverlayCanvas } from "@/components/OverlayCanvas";
 import { ScoreRail } from "@/components/ScoreRail";
@@ -41,6 +41,7 @@ export function App() {
   const [phase, setPhase] = useState<FixPhase>("idle");
   const [credits, setCredits] = useState(2);
   const [dragOver, setDragOver] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const displayImage = fixed?.image ?? creative?.image;
   const displayReport = fixed?.report ?? creative?.report;
@@ -168,8 +169,8 @@ export function App() {
       <main className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
         <section className="flex flex-col gap-4">
           {!creative ? (
-            <label
-              className={`flex min-h-[22rem] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-10 text-center transition-colors ${
+            <div
+              className={`flex min-h-[22rem] flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-10 text-center transition-colors ${
                 dragOver ? "border-primary bg-accent" : "border-border bg-card"
               }`}
               onDragOver={(e) => {
@@ -191,23 +192,24 @@ export function App() {
                 </p>
               </div>
               <input
+                ref={fileInputRef}
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
                 className="sr-only"
-                onChange={(e) => void onFile(e.target.files?.[0])}
-              />
-              <Button
-                type="button"
-                variant="secondary"
-                disabled={busy}
-                onClick={(e) => {
-                  e.preventDefault();
-                  void loadSample();
+                onChange={(e) => {
+                  void onFile(e.target.files?.[0]);
+                  e.target.value = "";
                 }}
-              >
-                {busy ? "Preparing…" : "Use a sample still"}
-              </Button>
-            </label>
+              />
+              <div className="flex flex-wrap justify-center gap-2">
+                <Button type="button" variant="outline" disabled={busy} onClick={() => fileInputRef.current?.click()}>
+                  Choose a file
+                </Button>
+                <Button type="button" variant="secondary" disabled={busy} onClick={() => void loadSample()}>
+                  {busy ? "Preparing…" : "Use a sample still"}
+                </Button>
+              </div>
+            </div>
           ) : (
             <>
               <div className="flex flex-wrap items-center justify-between gap-2">

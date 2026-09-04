@@ -11,6 +11,7 @@ FIXES_ENABLED = "true"
 TURNSTILE_BYPASS = "1"
 GEMINI_MODEL_PRIMARY = "gemini-3.1-flash-image"
 GEMINI_MODEL_ESCALATION = "gemini-3-pro-image"
+GEMINI_IMAGE_SIZE = "1K"
 DAILY_GEMINI_CAP = "200"
 BURN_ALERT_USD = "50"
 GLOBAL_FIX_CONCURRENCY = "20"
@@ -54,6 +55,23 @@ APP_ORIGIN = "https://staging.safezoneready.com"
 API_PUBLIC_URL = "https://staging.safezoneready.com"
 FIXES_ENABLED = "true"
 TURNSTILE_BYPASS = "0"
+GEMINI_MODEL_PRIMARY = "gemini-3.1-flash-image"
+GEMINI_MODEL_ESCALATION = "gemini-3-pro-image"
+GEMINI_IMAGE_SIZE = "1K"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "safezone-ready-staging"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "../../infra/migrations"
+
+[[env.staging.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "szr-assets-staging"
+
+[[env.staging.queues.producers]]
+binding = "FIX_QUEUE"
+queue = "szr-fix-jobs-staging"
 
 # [[env.staging.routes]]
 # pattern = "staging.safezoneready.com/api/*"

@@ -72,11 +72,17 @@ Do this on **staging** first. Never commit values.
 
 ### 1. Cloudflare
 
-1. Create a Pages project from this repo (`apps/web` build: `pnpm --filter @safezone-ready/web build`, output `apps/web/dist`).
-2. `npx wrangler d1 create safezone-ready` and paste `database_id` into both Worker `wrangler.toml` files.
-3. `npx wrangler d1 migrations apply safezone-ready --remote --env staging`
-4. `npx wrangler r2 bucket create szr-assets` and add an object lifecycle of 24–72 hours.
-5. `npx wrangler queues create szr-fix-jobs`
+1. Create an API token (Workers + D1 + R2 + Queues + Pages edit). Then:
+
+```bash
+export CLOUDFLARE_API_TOKEN=...
+export CLOUDFLARE_ACCOUNT_ID=...   # if the token can see more than one account
+./infra/provision-staging.sh
+```
+
+That creates `safezone-ready-staging` (D1), `szr-assets-staging` (R2), `szr-fix-jobs-staging` (Queue), applies `infra/migrations`, and deploys the API Worker, queue consumer, and Pages project. Commit the patched `database_id` afterwards.
+
+Manual equivalent: `npx wrangler d1 create safezone-ready-staging`, `r2 bucket create szr-assets-staging`, `queues create szr-fix-jobs-staging`, then migrate and `wrangler deploy --env staging`.
 6. Deploy API: `pnpm --filter @safezone-ready/api deploy -- --env staging`
 7. Deploy worker: `pnpm --filter @safezone-ready/worker deploy -- --env staging`
 8. Preferred routing: `https://safezoneready.com/api/*` → API Worker, Pages for the rest (first-party cookies).
@@ -102,7 +108,7 @@ Do this on **staging** first. Never commit values.
 ### 4. Stripe
 
 1. Test mode first. Prefer a [restricted API key](https://docs.stripe.com/keys/restricted-api-keys).
-2. Products: Starter pack (hypothesis £9 / 20 credits), Studio pack (hypothesis £29 / 80). Confirm with Alex before marketing.
+2. Products: Starter **£9 / 20**, Studio **£29 / 80** (recommended from Gemini list prices; see `docs/PRICING.md`).
 3. `wrangler secret put STRIPE_SECRET_KEY STRIPE_WEBHOOK_SECRET STRIPE_PRICE_STARTER STRIPE_PRICE_STUDIO`
 4. Webhook URL: `https://safezoneready.com/api/webhooks/stripe`. Events: `checkout.session.completed` (required), `charge.refunded` (log).
 5. Checkout Sessions: `mode=payment`, **omit** `payment_method_types`, use `StripeClient`, add `integration_identifier`.
@@ -118,10 +124,10 @@ Do this on **staging** first. Never commit values.
 
 ## Next steps for Alex
 
-1. Attach Pages + `/api` routes on `safezoneready.com` and apply the satellite 301s (checklist in `infra/redirects.md`).
-2. Confirm SKU prices (still hypotheses).
-3. Put Google / Stripe test / Gemini / Turnstile secrets in Wrangler.
-4. Deploy Workers + Pages to `staging.safezoneready.com`. Do not claim production until that is done.
+1. Put `CLOUDFLARE_API_TOKEN` in this environment (or your shell) and run `./infra/provision-staging.sh`. There is no Cloudflare login in this workspace today, so staging is not live yet.
+2. Attach Pages + `/api` on `staging.safezoneready.com`, then production apex. Satellite 301s: `infra/redirects.md`.
+3. Keep £9 / 20 and £29 / 80 unless Pro/refund rates blow up (`docs/PRICING.md`).
+4. Put Google / Stripe test / Gemini / Turnstile secrets in Wrangler.
 5. Counsel for Privacy Policy and Terms (retention, Google as Gemini sub-processor).
 6. Decide whether 2 free fixes per Google account is acceptable abuse risk.
 
