@@ -1,0 +1,22 @@
+{
+  "name": "safezone-ready",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Safe Zone Ready: multi-platform ads safe-zone checker and AI fix",
+  "packageManager": "pnpm@10.33.3",
+  "scripts": {
+    "dev": "pnpm --filter @safezone-ready/web dev",
+    "dev:api": "pnpm --filter @safezone-ready/api dev",
+    "dev:worker": "pnpm --filter @safezone-ready/worker dev",
+    "test": "pnpm --filter @safezone-ready/safezone-specs test",
+    "typecheck": "pnpm -r typecheck",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r --if-present lint"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "workerd"]
+  }
+}

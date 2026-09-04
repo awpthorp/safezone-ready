@@ -1,0 +1,144 @@
+{
+  "specVersion": "2026-09-04",
+  "disclaimer": "practical-guardrail",
+  "notes": "Percentages are practical guardrails derived from public platform guidance and measured official overlay templates. Not affiliated with Meta, Google, or TikTok. Re-measure before launch.",
+  "placements": [
+    {
+      "id": "meta_stories",
+      "label": "Meta Stories",
+      "platform": "meta",
+      "family": "stories",
+      "aspectRatio": 0.5625,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1920,
+      "margins": { "top": 0.14, "bottom": 0.2, "left": 0.06, "right": 0.06 },
+      "rails": [],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "Meta Help Centre 980593475366490 plus 2026 unified 9:16 industry interpolation (14/20/6). Disclaimer preset uses bottom 0.40."
+    },
+    {
+      "id": "meta_stories_disclaimer",
+      "label": "Meta Stories (disclaimer)",
+      "platform": "meta",
+      "family": "stories",
+      "aspectRatio": 0.5625,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1920,
+      "margins": { "top": 0.14, "bottom": 0.4, "left": 0.06, "right": 0.06 },
+      "rails": [],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "Meta Help Centre note: leave the bottom 40% clear for disclaimer copy.",
+      "hiddenByDefault": true
+    },
+    {
+      "id": "meta_reels",
+      "label": "Meta Reels",
+      "platform": "meta",
+      "family": "reels",
+      "aspectRatio": 0.5625,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1920,
+      "margins": { "top": 0.14, "bottom": 0.35, "left": 0.06, "right": 0.06 },
+      "rails": [
+        {
+          "id": "reels_engagement",
+          "x": 0.82,
+          "y": 0.42,
+          "width": 0.18,
+          "height": 0.36
+        }
+      ],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "Meta Help Centre 980593475366490; practical 14/35/6 on 1080x1920; optional engagement rail."
+    },
+    {
+      "id": "meta_feed_1x1",
+      "label": "Meta Feed 1:1",
+      "platform": "meta",
+      "family": "feed",
+      "aspectRatio": 1,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1080,
+      "margins": { "top": 0.09, "bottom": 0.09, "left": 0.09, "right": 0.09 },
+      "rails": [],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "Meta Help Centre: keep bottom and side edges clear on non-9:16 Feed. Practical ~100px on 1080."
+    },
+    {
+      "id": "meta_feed_4x5",
+      "label": "Meta Feed 4:5",
+      "platform": "meta",
+      "family": "feed",
+      "aspectRatio": 0.8,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1350,
+      "margins": { "top": 0.185, "bottom": 0.185, "left": 0.093, "right": 0.093 },
+      "rails": [],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "Practical Feed portrait padding (~250px top/bottom, ~100px sides on 1080x1350)."
+    },
+    {
+      "id": "youtube_shorts",
+      "label": "YouTube Shorts",
+      "platform": "youtube",
+      "family": "shorts",
+      "aspectRatio": 0.5625,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1920,
+      "margins": { "top": 0.15, "bottom": 0.35, "left": 0.044, "right": 0.178 },
+      "rails": [],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "Google Ads Shorts asset article plus measured vertical safe-zone overlay family (15/35/4.4/17.8)."
+    },
+    {
+      "id": "tiktok_infeed",
+      "label": "TikTok In-Feed",
+      "platform": "tiktok",
+      "family": "infeed",
+      "aspectRatio": 0.5625,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1920,
+      "margins": { "top": 0.125, "bottom": 0.344, "left": 0.111, "right": 0.111 },
+      "rails": [
+        {
+          "id": "tiktok_engagement",
+          "x": 0.722,
+          "y": 0.438,
+          "width": 0.167,
+          "height": 0.218
+        }
+      ],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "TikTok Ads Help Centre In-Feed ZIP (standard caption family). Official zone shrinks with caption length."
+    },
+    {
+      "id": "combined",
+      "label": "All platforms (strictest)",
+      "platform": "combined",
+      "family": "union",
+      "aspectRatio": 0.5625,
+      "aspectTolerance": 0.04,
+      "recommendedWidth": 1080,
+      "recommendedHeight": 1920,
+      "margins": { "top": 0.15, "bottom": 0.35, "left": 0.111, "right": 0.178 },
+      "rails": [
+        {
+          "id": "union_rail",
+          "x": 0.722,
+          "y": 0.42,
+          "width": 0.278,
+          "height": 0.36
+        }
+      ],
+      "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
+      "source": "Union of Meta Reels, Shorts, and TikTok In-Feed practical margins."
+    }
+  ]
+}

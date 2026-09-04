@@ -1,0 +1,54 @@
+name = "safezone-ready-api"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "local"
+APP_ORIGIN = "http://127.0.0.1:43173"
+API_PUBLIC_URL = "http://127.0.0.1:8787"
+FIXES_ENABLED = "true"
+TURNSTILE_BYPASS = "1"
+GEMINI_MODEL_PRIMARY = "gemini-3.1-flash-image"
+GEMINI_MODEL_ESCALATION = "gemini-3-pro-image"
+DAILY_GEMINI_CAP = "200"
+BURN_ALERT_USD = "50"
+GLOBAL_FIX_CONCURRENCY = "20"
+ASSET_TTL_HOURS = "24"
+ALLOW_UNVERIFIED_DOWNLOAD = "false"
+STRIPE_STARTER_CREDITS = "20"
+STRIPE_STUDIO_CREDITS = "80"
+
+# Secrets (wrangler secret put / .dev.vars, never commit):
+# GEMINI_API_KEY
+# STRIPE_SECRET_KEY
+# STRIPE_WEBHOOK_SECRET
+# STRIPE_PRICE_STARTER
+# STRIPE_PRICE_STUDIO
+# GOOGLE_CLIENT_ID
+# GOOGLE_CLIENT_SECRET
+# TURNSTILE_SECRET_KEY
+# SESSION_SECRET
+# IP_HASH_SECRET
+
+[[d1_databases]]
+binding = "DB"
+database_name = "safezone-ready"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "../../infra/migrations"
+
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "szr-assets"
+
+[[queues.producers]]
+binding = "FIX_QUEUE"
+queue = "szr-fix-jobs"
+
+[env.staging]
+name = "safezone-ready-api-staging"
+vars = { ENVIRONMENT = "staging", FIXES_ENABLED = "true", TURNSTILE_BYPASS = "0" }
+
+[env.production]
+name = "safezone-ready-api-production"
+vars = { ENVIRONMENT = "production", FIXES_ENABLED = "true", TURNSTILE_BYPASS = "0" }

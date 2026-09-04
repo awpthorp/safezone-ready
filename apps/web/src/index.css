@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-background: oklch(0.16 0.012 80);
+  --color-foreground: oklch(0.96 0.01 85);
+  --color-card: oklch(0.21 0.012 80);
+  --color-card-foreground: oklch(0.96 0.01 85);
+  --color-muted: oklch(0.27 0.012 80);
+  --color-muted-foreground: oklch(0.72 0.02 80);
+  --color-border: oklch(0.33 0.014 80);
+  --color-input: oklch(0.33 0.014 80);
+  --color-primary: oklch(0.82 0.16 95);
+  --color-primary-foreground: oklch(0.2 0.03 95);
+  --color-secondary: oklch(0.28 0.02 80);
+  --color-secondary-foreground: oklch(0.96 0.01 85);
+  --color-destructive: oklch(0.63 0.2 25);
+  --color-accent: oklch(0.3 0.03 95);
+  --color-accent-foreground: oklch(0.96 0.01 85);
+  --color-ring: oklch(0.82 0.16 95);
+  --color-ready: oklch(0.78 0.15 145);
+  --color-caution: oklch(0.82 0.16 85);
+  --color-risk: oklch(0.68 0.19 25);
+  --radius: 0.625rem;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+}
+
+.danger-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgb(239 68 68 / 0.28),
+    rgb(239 68 68 / 0.28) 6px,
+    rgb(239 68 68 / 0.08) 6px,
+    rgb(239 68 68 / 0.08) 12px
+  );
+}

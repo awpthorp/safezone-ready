@@ -1,0 +1,16 @@
+{
+  "name": "@safezone-ready/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --config wrangler.toml --port 8788",
+    "deploy": "wrangler deploy --config wrangler.toml",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260903.1",
+    "typescript": "^5.9.2",
+    "wrangler": "^4.34.0"
+  }
+}
