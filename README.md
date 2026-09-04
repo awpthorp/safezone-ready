@@ -5,6 +5,7 @@ Private freemium product: score Meta / YouTube Shorts / TikTok safe zones locall
 
 This is **not** part of Posterly. The only Posterly link is a soft upsell after download.
 
+Sit-down brief: [`CONTEXT.md`](./CONTEXT.md)  
 Canonical spec: [`docs/SPEC.md`](./docs/SPEC.md)  
 Threat model: [`docs/SECURITY.md`](./docs/SECURITY.md)
 

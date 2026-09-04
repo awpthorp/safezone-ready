@@ -1,19 +1,18 @@
 # Safe Zone Ready — context for this folder
 
-Read this before you edit anything. Canonical product spec is [`docs/SPEC.md`](./docs/SPEC.md). This file is the short version for a human or an agent sitting in this repo.
+Read this before you edit anything. Canonical product spec is `docs/SPEC.md`. This file is the short version for a human or an agent sitting in this repo.
 
 ## What this is
 
 A freemium check for ad stills. Drop a PNG, JPEG or WebP. See where Instagram, TikTok and YouTube will cover the offer. Optionally pay to move the offer so captions and buttons do not sit on it.
 
-Working name in code: Safe Zone Ready / `safezone-ready`.
+Working name in code: Safe Zone Ready / `safezone-ready`.  
+Product site: https://safezoneready.com  
+Staging: https://staging.safezoneready.com  
+Origin: https://cursor.com/codebase/athorp/safezone-ready  
+GitHub (laptop remote): https://github.com/awpthorp/safezone-ready
 
-- Product site: https://safezoneready.com
-- Staging: https://staging.safezoneready.com
-- Origin: https://cursor.com/codebase/athorp/safezone-ready
-- GitHub (laptop remote): https://github.com/awpthorp/safezone-ready
-
-This is not Posterly. Soft link to [poster.ly](https://poster.ly) after download only. Never put this inside `awpthorp/posterly`.
+This is not Posterly. Soft link to poster.ly after download only. Never put this inside `awpthorp/posterly`.
 
 ## Who uses it
 
@@ -26,7 +25,7 @@ A media buyer about to spend. They do not want “ink in chrome 70”, Gemini, S
 - Free check is local (`FileReader`). Nothing uploads for a score.
 - Auth (Google) before the first AI fix. Two free fixes per account, then Stripe packs (£9 / 20, £29 / 80).
 - Scores are practical overlays, not platform certification.
-- Do not brand the product “Meta Safe Zone”. `metasafezone.com` is SEO only. It 301s to https://safezoneready.com/?platform=meta. Do not host the app there. Do not put that host in CORS, OAuth, Stripe or Turnstile.
+- Do not brand the product “Meta Safe Zone”. `metasafezone.com` is SEO only. It 301s to `https://safezoneready.com/?platform=meta`. Do not host the app there. Do not put that host in CORS, OAuth, Stripe or Turnstile.
 - `www.safezoneready.com` 301s to the apex.
 - Affiliation, SynthID, 72h retention: legal footer or legal pages only. Not the tool chrome.
 - No public Gemini proxy. Key lives on the Worker only.
@@ -44,7 +43,7 @@ Copy this block into the next repo when you start something similar.
 | Files | R2 with a short TTL |
 | Ledger / users | D1 |
 | Abuse | WAF, Bot Fight, Turnstile, rate limits |
-| Identity | Google OAuth (`openid email profile`) |
+| Identity | Google OAuth (openid email profile) |
 | Money | Stripe Checkout credit packs, test mode first |
 | Image AI | Gemini Flash Image, one Pro escalation, then pad, then refund |
 | Domains | Cloudflare Registrar. One mothership. Satellites are 301s |
@@ -91,20 +90,16 @@ Copy `.env.example` to `apps/api/.dev.vars` and `apps/worker/.dev.vars` when you
 
 ## What is live vs stub
 
-Live: local overlay check, scores, buyer copy, staging Pages + API health on Cloudflare Clients (`alex@gr.agency`).
-
+Live: local overlay check, scores, buyer copy, staging Pages + API health on Cloudflare Clients (`alex@gr.agency`).  
 Stub until secrets: Google OAuth, Stripe, Gemini edits, R2 uploads. Fix UI is a mock.
 
-Staging ids: [`infra/staging.json`](./infra/staging.json). Custom domain: https://staging.safezoneready.com
+Staging ids: `infra/staging.json`. Custom domain: https://staging.safezoneready.com
 
 ## Copy and scoring
 
-Buyer labels live in `packages/safezone-specs/src/copy.ts`.
-
-Grades on screen: Ready / Tight / Covered.
-
-Never print occupancy, ink, chrome, spec versions, or `at_risk` in the UI.
-
+Buyer labels live in `packages/safezone-specs/src/copy.ts`.  
+Grades on screen: Ready / Tight / Covered.  
+Never print occupancy, ink, chrome, spec versions, or “at_risk” in the UI.  
 `?platform=meta` selects Instagram Reels (satellite deep link).
 
 ## If you are an agent
@@ -120,11 +115,11 @@ Never print occupancy, ink, chrome, spec versions, or `at_risk` in the UI.
 
 | File | Open when |
 | --- | --- |
-| [`CONTEXT.md`](./CONTEXT.md) | You just sat down |
-| [`README.md`](./README.md) | How to run and wire secrets |
-| [`docs/SPEC.md`](./docs/SPEC.md) | Product, data model, placements, pipeline |
-| [`docs/SECURITY.md`](./docs/SECURITY.md) | Abuse, retention, incident |
-| [`docs/PRICING.md`](./docs/PRICING.md) | Pack maths |
-| [`docs/SEO.md`](./docs/SEO.md) | Titles, satellites, sitemap |
-| [`infra/redirects.md`](./infra/redirects.md) | Domain 301s |
-| [`infra/README.md`](./infra/README.md) | Wrangler / staging |
+| `CONTEXT.md` | You just sat down |
+| `README.md` | How to run and wire secrets |
+| `docs/SPEC.md` | Product, data model, placements, pipeline |
+| `docs/SECURITY.md` | Abuse, retention, incident |
+| `docs/PRICING.md` | Pack maths |
+| `docs/SEO.md` | Titles, satellites, sitemap |
+| `infra/redirects.md` | Domain 301s |
+| `infra/README.md` | Wrangler / staging |
