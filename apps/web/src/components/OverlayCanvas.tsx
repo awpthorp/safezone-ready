@@ -45,7 +45,7 @@ export function OverlayCanvas({ image, placementId, showOverlay }: OverlayCanvas
     <canvas
       ref={canvasRef}
       className="mx-auto max-h-[70vh] w-full rounded-lg border border-border bg-black object-contain"
-      aria-label="Creative with safe-zone overlay"
+      aria-label="Ad still with cover areas shown"
     />
   );
 }

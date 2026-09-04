@@ -1,12 +1,19 @@
-import type { Grade, PlacementId, PlacementScore, ScoreReport } from "@safezone-ready/safezone-specs";
+import {
+  buyerPlacementLabel,
+  describePlacementIssue,
+  type Grade,
+  type PlacementId,
+  type PlacementScore,
+  type ScoreReport,
+} from "@safezone-ready/safezone-specs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const GRADE_LABEL: Record<Grade, string> = {
   ready: "Ready",
-  caution: "Caution",
-  at_risk: "At risk",
+  caution: "Tight",
+  at_risk: "Covered",
 };
 
 const GRADE_VARIANT: Record<Grade, "ready" | "caution" | "risk"> = {
@@ -27,18 +34,18 @@ export function ScoreRail({ report, activeId, onSelect }: ScoreRailProps) {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between gap-3">
-            <CardTitle>Overall (strictest)</CardTitle>
+            <CardTitle>Will they cover it?</CardTitle>
             <Badge variant={GRADE_VARIANT[report.grade]}>{GRADE_LABEL[report.grade]}</Badge>
           </div>
         </CardHeader>
         <CardContent>
-          <p className="font-mono text-4xl font-medium tracking-tight">{report.overall}</p>
+          <p className="font-mono text-4xl font-medium tracking-tight tabular-nums">{report.overall}</p>
           <p className="mt-1 text-xs text-muted-foreground">
-            {report.width} × {report.height} · guardrail pack {report.specVersion}
+            {report.width} × {report.height}
           </p>
           {report.placements.some((p) => p.confidence === "low") ? (
             <p className="mt-2 text-xs text-caution">
-              Overlay only on some placements. We have not measured ink in every danger band yet.
+              We could not read every edge on this still. Treat the score as a first look.
             </p>
           ) : null}
         </CardContent>
@@ -72,16 +79,13 @@ function ScoreRow({
       type="button"
       onClick={onSelect}
       className={cn(
-        "flex w-full items-center justify-between rounded-lg border px-3 py-2 text-left transition-colors",
+        "flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left transition-colors",
         active ? "border-primary bg-accent" : "border-border bg-card hover:bg-accent/60",
       )}
     >
-      <div>
-        <p className="text-sm font-medium">{placement.label}</p>
-        <p className="text-xs text-muted-foreground">
-          {placement.aspectFit ? "Ratio fits" : "Ratio is off"}
-          {placement.occupancyPenalty > 0 ? ` · ink in chrome ${placement.occupancyPenalty}` : ""}
-        </p>
+      <div className="min-w-0">
+        <p className="text-sm font-medium">{buyerPlacementLabel(placement.placementId)}</p>
+        <p className="text-xs text-muted-foreground">{describePlacementIssue(placement)}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
         <Badge variant={GRADE_VARIANT[placement.grade]}>{GRADE_LABEL[placement.grade]}</Badge>

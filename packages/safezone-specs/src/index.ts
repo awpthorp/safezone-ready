@@ -2,6 +2,7 @@ export { specPack, SPEC_VERSION, DEFAULT_PLACEMENT_IDS, listPlacements, getPlace
 export { scoreCreative, scorePlacement, gradeFromScore, aspectPenalty, occupancyPenalty } from "./scorer";
 export { estimateRegionOccupancy, estimateOverlayOccupancy } from "./occupancy";
 export { parsePlatformParam, parsePlatformSearch } from "./platform";
+export { describePlacementIssue, describeReportHint, busiestRegion, buyerPlacementLabel } from "./copy";
 export type {
   PlatformId,
   PlacementId,

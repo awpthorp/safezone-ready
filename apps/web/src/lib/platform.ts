@@ -14,7 +14,7 @@ export function platformDeepLinkLabel(search: string): string | null {
     return null;
   }
   if (["meta", "reels", "meta_reels", "stories", "feed", "meta_stories", "meta_feed_4x5", "meta_feed_1x1"].includes(raw)) {
-    return "Meta placements (from the metasafezone.com link)";
+    return "Opened on Instagram and Facebook placements. Drop a still to see Reels and Stories first.";
   }
   return null;
 }

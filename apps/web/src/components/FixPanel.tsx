@@ -1,5 +1,5 @@
 import type { ScoreReport } from "@safezone-ready/safezone-specs";
-import { Download, Sparkles } from "lucide-react";
+import { Download } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,46 +21,38 @@ export function FixPanel({ phase, credits, before, after, onStart, onDownload, o
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" />
-          Make this safe-zone ready
-        </CardTitle>
+        <CardTitle>Move the offer out of the cover</CardTitle>
         <CardDescription>
-          AI edit via Google Gemini. It must keep offer text, logos, and CTAs. Two complimentary
-          fixes per account, then credit packs.
+          Keep the price, the logo, and the button. Two free edits, then a pack.
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-3">
         {phase === "idle" ? (
           <>
             <p className="text-sm text-muted-foreground">
-              Local checks stay free and never leave this browser. An AI fix signs you in with
-              Google first. That is the main spam control.
+              Checks stay on this computer. Sign in only if you want us to shift the still.
             </p>
-            <Button onClick={onStart}>Sign in and run an AI fix</Button>
-            <p className="text-xs text-muted-foreground">{credits} complimentary fixes remaining on this demo account.</p>
+            <Button onClick={onStart}>Fix this still</Button>
+            <p className="text-xs text-muted-foreground">
+              {credits} free {credits === 1 ? "edit" : "edits"} left on this demo account.
+            </p>
           </>
         ) : null}
 
-        {phase === "auth" ? (
-          <Alert>
-            Google OAuth is stubbed in this workspace. No live client secret is configured. The
-            demo continues as if you signed in.
-          </Alert>
-        ) : null}
+        {phase === "auth" ? <Alert>Signing you in…</Alert> : null}
 
         {phase === "running" ? (
-          <Alert>Analysing, planning, editing, verifying, then rescoring. Flash first, Pro once if needed.</Alert>
+          <Alert>Moving the offer so captions cannot sit on it.</Alert>
         ) : null}
 
         {phase === "paywall" ? (
           <>
             <Alert>
-              You have used your 2 complimentary AI fixes. Buy a credit pack to keep going. Local
-              checks stay free. Pack prices are hypotheses: £9 / 20 and £29 / 80.
+              You have used both free edits. Local checks stay free. Packs are £9 for 20 and £29
+              for 80.
             </Alert>
             <Button variant="secondary" disabled>
-              Checkout (Stripe test mode not configured)
+              Buy a pack
             </Button>
           </>
         ) : null}
@@ -70,32 +62,29 @@ export function FixPanel({ phase, credits, before, after, onStart, onDownload, o
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="rounded-md border border-border p-2">
                 <p className="text-xs text-muted-foreground">Before</p>
-                <p className="font-mono text-xl">{before.overall}</p>
+                <p className="font-mono text-xl tabular-nums">{before.overall}</p>
               </div>
               <div className="rounded-md border border-border p-2">
-                <p className="text-xs text-muted-foreground">After (mocked)</p>
-                <p className="font-mono text-xl">{after.overall}</p>
+                <p className="text-xs text-muted-foreground">After</p>
+                <p className="font-mono text-xl tabular-nums">{after.overall}</p>
               </div>
             </div>
-            <Alert>
-              Gemini outputs include a SynthID watermark. You cannot remove it in this product.
-              This preview is a local mock until Worker secrets are set.
-            </Alert>
+            <Alert>This preview is a stand-in until live edits are switched on.</Alert>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button onClick={onDownload}>
                 <Download className="h-4 w-4" />
-                Download PNG
+                Download this still
               </Button>
               <Button variant="outline" onClick={onReset}>
                 Check another still
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Optional next step:{" "}
+              Need sizes or a schedule?{" "}
               <a className="underline underline-offset-2" href={posterlyDownloadLink()} target="_blank" rel="noreferrer">
-                schedule or resize this still in Posterly
+                Open in Posterly
               </a>
-              . Posterly is a separate product.
+              . Separate product.
             </p>
           </>
         ) : null}

@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
+  describePlacementIssue,
+  describeReportHint,
   estimateRegionOccupancy,
   gradeFromScore,
   parsePlatformSearch,
@@ -98,6 +100,46 @@ describe("platform deep link", () => {
     expect(parsePlatformSearch("platform=stories")).toBe("meta_stories");
     expect(parsePlatformSearch("?platform=youtube")).toBe("youtube_shorts");
     expect(parsePlatformSearch("")).toBe("combined");
+  });
+});
+
+describe("buyer-facing copy", () => {
+  it("names the covered area instead of printing a penalty", () => {
+    const crowded = scorePlacement(1080, 1920, "meta_reels", {
+      top: 0,
+      bottom: 0.8,
+      left: 0,
+      right: 0,
+    });
+    expect(describePlacementIssue(crowded)).toBe("Text sits under the caption and buttons");
+    expect(describePlacementIssue(crowded)).not.toMatch(/ink|chrome|occupancy/i);
+  });
+
+  it("says the still is clear when the score is high", () => {
+    const clean = scorePlacement(1080, 1920, "meta_reels", {
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+    });
+    expect(describePlacementIssue(clean)).toBe("Looks clear here");
+  });
+
+  it("names the app a buyer would recognise", () => {
+    const report = scoreCreative({
+      width: 1080,
+      height: 1920,
+      occupancy: {
+        combined: { top: 0, bottom: 0.8, left: 0, right: 0, rail: 0 },
+        meta_reels: { top: 0, bottom: 0.8, left: 0, right: 0, rail: 0 },
+        tiktok_infeed: { top: 0, bottom: 0.1, left: 0, right: 0, rail: 0 },
+      },
+      placementIds: ["combined", "meta_reels", "tiktok_infeed"],
+    });
+    const hint = describeReportHint(report);
+    expect(hint).toMatch(/Instagram Reels will cover it/);
+    expect(hint).toMatch(/caption and buttons/);
+    expect(hint).not.toMatch(/ink|chrome|occupancy|strictest|guardrail/i);
   });
 });
 

@@ -1,10 +1,9 @@
 import {
   DEFAULT_PLACEMENT_IDS,
-  SPEC_VERSION,
+  describeReportHint,
   type PlacementId,
   type ScoreReport,
 } from "@safezone-ready/safezone-specs";
-import { ShieldCheck, Upload } from "lucide-react";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { FixPanel, type FixPhase } from "@/components/FixPanel";
 import { OverlayCanvas } from "@/components/OverlayCanvas";
@@ -113,7 +112,7 @@ export function App() {
       setCredits((n) => n - 1);
       setPhase("done");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "The mocked fix failed.");
+      setError(err instanceof Error ? err.message : "The edit failed. Try another still.");
       setPhase("idle");
     }
   }, [creative, credits]);
@@ -124,7 +123,7 @@ export function App() {
     }
     const link = document.createElement("a");
     link.href = fixed.url;
-    link.download = "safezone-ready-mock.png";
+    link.download = "safezone-ready.png";
     link.click();
   }, [fixed]);
 
@@ -135,34 +134,14 @@ export function App() {
     setError(null);
   }, []);
 
-  const hint = useMemo(() => {
-    if (!displayReport) {
-      return null;
-    }
-    const worst = displayReport.placements.slice().sort((a, b) => a.score - b.score)[0];
-    if (!worst || worst.score >= 85) {
-      return "This still looks clear of the practical chrome bands. Still preview it in Ads Manager before you spend.";
-    }
-    return `${worst.label} is the tightest placement. Move offer text into the dashed rectangle.`;
-  }, [displayReport]);
+  const hint = useMemo(() => (displayReport ? describeReportHint(displayReport) : null), [displayReport]);
 
   return (
     <div className="min-h-screen">
       <header className="border-b border-border">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <ShieldCheck className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold tracking-tight">Safe Zone Ready</p>
-              <p className="text-xs text-muted-foreground">safezoneready.com · local overlay check</p>
-            </div>
-          </div>
-          <p className="max-w-md text-xs text-muted-foreground sm:text-right">
-            Not affiliated with Meta, Google, or TikTok. Overlays are approximate guardrails
-            (pack {SPEC_VERSION}).
-          </p>
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-5 sm:flex-row sm:items-baseline sm:justify-between">
+          <p className="text-sm font-semibold tracking-tight">Safe Zone Ready</p>
+          <p className="text-sm text-muted-foreground">Check an ad before you spend.</p>
         </div>
       </header>
 
@@ -184,11 +163,11 @@ export function App() {
                 void onFile(e.dataTransfer.files[0]);
               }}
             >
-              <Upload className="h-8 w-8 text-primary" />
               <div>
-                <p className="text-base font-medium">Drop a still to score it</p>
+                <p className="text-base font-medium">Drop the ad still</p>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  PNG, JPEG, or WebP. The file stays in this tab. Nothing is uploaded for a check.
+                  See where Instagram, TikTok and YouTube sit on the offer. The file stays in this
+                  tab.
                 </p>
               </div>
               <input
@@ -206,9 +185,10 @@ export function App() {
                   Choose a file
                 </Button>
                 <Button type="button" variant="secondary" disabled={busy} onClick={() => void loadSample()}>
-                  {busy ? "Preparing…" : "Use a sample still"}
+                  {busy ? "Preparing…" : "Try a sample"}
                 </Button>
               </div>
+              <p className="text-xs text-muted-foreground">PNG, JPEG or WebP.</p>
             </div>
           ) : (
             <>
@@ -216,7 +196,7 @@ export function App() {
                 <p className="truncate text-sm text-muted-foreground">{creative.fileName}</p>
                 <div className="flex flex-wrap gap-2">
                   <Button type="button" size="sm" variant="outline" onClick={() => setShowOverlay((v) => !v)}>
-                    {showOverlay ? "Hide overlay" : "Show overlay"}
+                    {showOverlay ? "Hide cover" : "Show cover"}
                   </Button>
                   <Button type="button" size="sm" variant="ghost" onClick={reset}>
                     Clear
@@ -230,24 +210,16 @@ export function App() {
             </>
           )}
 
-          {deepLinkLabel && !creative ? (
-            <Alert>
-              {deepLinkLabel}. You are on Safe Zone Ready. We are not affiliated with Meta. All
-              platform scores stay available.
-            </Alert>
-          ) : null}
+          {deepLinkLabel && !creative ? <Alert>{deepLinkLabel}</Alert> : null}
           {error ? <AlertError>{error}</AlertError> : null}
-          {busy && creative ? <Alert>Scoring in this browser…</Alert> : null}
+          {busy && creative ? <Alert>Reading the still…</Alert> : null}
         </section>
 
         <aside className="flex flex-col gap-4">
           {displayReport ? (
             <ScoreRail report={displayReport} activeId={activeId} onSelect={setActiveId} />
           ) : (
-            <Alert>
-              Unlimited local checks. Sign in is only required when you want Gemini to move the
-              offer into the safe rectangle.
-            </Alert>
+            <Alert>Checks stay on this computer. Nothing uploads until you ask us to move the offer.</Alert>
           )}
 
           {creative ? (
@@ -261,26 +233,15 @@ export function App() {
               onReset={reset}
             />
           ) : null}
-
-          <LegalNotes />
         </aside>
       </main>
-    </div>
-  );
-}
 
-function LegalNotes() {
-  return (
-    <div className="space-y-2 text-xs leading-relaxed text-muted-foreground">
-      <p>
-        Scores estimate where interface chrome may cover your creative. Device size, caption
-        length, and A/B tests can move those elements. This is not legal, brand-safety, or policy
-        approval. Always preview in the official ads manager before you spend.
-      </p>
-      <p>
-        AI-edited images are generated with Google Gemini and include a SynthID watermark. Local
-        checks never upload your file. An AI fix stores the image for at most 72 hours.
-      </p>
+      <footer className="border-t border-border">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <p>Safe Zone Ready</p>
+          <p>Not affiliated with Meta, Google or TikTok.</p>
+        </div>
+      </footer>
     </div>
   );
 }

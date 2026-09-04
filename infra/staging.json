@@ -17,8 +17,8 @@
     "api": "https://safezone-ready-api-staging.grassroots-account.workers.dev",
     "worker": "https://safezone-ready-worker-staging.grassroots-account.workers.dev",
     "pages": "https://staging.safezone-ready-web.pages.dev",
-    "pagesDeployment": "https://e9df21f6.safezone-ready-web.pages.dev",
-    "customDomainPending": "https://staging.safezoneready.com"
+    "pagesDeployment": "https://1dc60cc4.safezone-ready-web.pages.dev",
+    "customDomain": "https://staging.safezoneready.com"
   },
   "dns": {
     "note": "OAuth token has zone:read, not DNS write. Add a proxied CNAME: staging.safezoneready.com -> safezone-ready-web.pages.dev"
