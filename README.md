@@ -124,7 +124,7 @@ Manual equivalent: `npx wrangler d1 create safezone-ready-staging`, `r2 bucket c
 
 ## Next steps for Alex
 
-1. Put `CLOUDFLARE_API_TOKEN` in this environment (or your shell) and run `./infra/provision-staging.sh`. There is no Cloudflare login in this workspace today, so staging is not live yet.
+1. Staging is live on the **Clients** account (`alex@gr.agency`). URLs and resource ids: `infra/staging.json`. Add a proxied CNAME `staging` → `safezone-ready-web.pages.dev` so `https://staging.safezoneready.com` can finish SSL (OAuth cannot write DNS).
 2. Attach Pages + `/api` on `staging.safezoneready.com`, then production apex. Satellite 301s: `infra/redirects.md`.
 3. Keep £9 / 20 and £29 / 80 unless Pro/refund rates blow up (`docs/PRICING.md`).
 4. Put Google / Stripe test / Gemini / Turnstile secrets in Wrangler.

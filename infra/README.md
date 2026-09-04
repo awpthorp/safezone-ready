@@ -13,7 +13,9 @@ export CLOUDFLARE_API_TOKEN=...
 ./infra/provision-staging.sh
 ```
 
-That is the non-interactive path (API token, no `wrangler login`). Staging resource names: `safezone-ready-staging`, `szr-assets-staging`, `szr-fix-jobs-staging`.
+Staging on the Clients account is already provisioned (see `infra/staging.json`). Re-run the script only to recreate missing pieces.
+
+One DNS step is still manual: proxied CNAME `staging.safezoneready.com` → `safezone-ready-web.pages.dev`. The Wrangler OAuth grant can create Workers/Pages/D1/R2/Queues but cannot write DNS records.
 
 Set secrets with `npx wrangler secret put NAME --config apps/api/wrangler.toml`.
 Do not put production values in git.
