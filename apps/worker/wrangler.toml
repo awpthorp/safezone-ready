@@ -37,12 +37,13 @@ ENVIRONMENT = "staging"
 GEMINI_MODEL_PRIMARY = "gemini-3.1-flash-image"
 GEMINI_MODEL_ESCALATION = "gemini-3-pro-image"
 GEMINI_IMAGE_SIZE = "1K"
+GEMINI_API_BASE = "https://generativelanguage.googleapis.com/v1beta/interactions"
 FIXES_ENABLED = "true"
 
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "safezone-ready-staging"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "d0785fae-785b-4ecf-be37-8d5b2ae26c14"
 migrations_dir = "../../infra/migrations"
 
 [[env.staging.r2_buckets]]

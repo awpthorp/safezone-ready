@@ -1,0 +1,27 @@
+{
+  "accountId": "155abf5dd13b0d67717f41fde2a3ac19",
+  "accountName": "Clients",
+  "provisionedAt": "2026-09-04T07:02:08Z",
+  "d1": {
+    "name": "safezone-ready-staging",
+    "id": "d0785fae-785b-4ecf-be37-8d5b2ae26c14"
+  },
+  "r2": {
+    "bucket": "szr-assets-staging"
+  },
+  "queue": {
+    "name": "szr-fix-jobs-staging"
+  },
+  "pagesProject": "safezone-ready-web",
+  "urls": {
+    "api": "https://safezone-ready-api-staging.grassroots-account.workers.dev",
+    "worker": "https://safezone-ready-worker-staging.grassroots-account.workers.dev",
+    "pages": "https://staging.safezone-ready-web.pages.dev",
+    "pagesDeployment": "https://ea55e618.safezone-ready-web.pages.dev",
+    "customDomainPending": "https://staging.safezoneready.com"
+  },
+  "dns": {
+    "note": "OAuth token has zone:read, not DNS write. Add a proxied CNAME: staging.safezoneready.com -> safezone-ready-web.pages.dev"
+  },
+  "workerRoute": "staging.safezoneready.com/api/*"
+}

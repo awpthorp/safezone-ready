@@ -3,6 +3,8 @@ export const FIXED_APP_ORIGINS = [
   "https://safezoneready.com",
   "https://www.safezoneready.com",
   "https://staging.safezoneready.com",
+  "https://safezone-ready-web.pages.dev",
+  "https://staging.safezone-ready-web.pages.dev",
   "http://127.0.0.1:43173",
   "http://localhost:43173",
 ] as const;
