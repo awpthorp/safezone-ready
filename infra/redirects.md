@@ -7,8 +7,8 @@ Purchased on Cloudflare Registrar (4 September 2026). Apply these in the dashboa
 | `safezoneready.com` | Mothership / canonical | Pages + `/api/*` Worker |
 | `www.safezoneready.com` | www alias | **301** to `https://safezoneready.com{path}{query}` |
 | `staging.safezoneready.com` | Staging | Separate Pages alias + Worker env |
-| `metasafezone.com` | Meta SEO satellite | **301** to mothership + `platform=meta` |
-| `www.metasafezone.com` | Satellite www | **301** to mothership + `platform=meta` |
+| `metasafezone.com` | Meta SEO satellite | **301** to `https://safezoneready.com/meta` |
+| `www.metasafezone.com` | Satellite www | **301** to `https://safezoneready.com/meta` |
 
 No other satellites are purchased. Do not create rules for `isitreadyforads.com` or similar.
 
@@ -27,7 +27,7 @@ Cloudflare Redirect Rule equivalent:
 - Status: 301
 - Preserve query: yes
 
-Canonical tag on Pages: `https://safezoneready.com/`.
+Canonical tags are per-page HTML on `https://safezoneready.com{path}`. Do not set a site-wide `Link: rel=canonical` header.
 
 ## 2. Meta satellite: always 301, never host the app
 
@@ -44,18 +44,12 @@ If:
 Then (dynamic destination):
 
 ```text
-concat(
-  "https://safezoneready.com",
-  http.request.uri.path,
-  if(http.request.uri.query eq "", "?platform=meta", concat("?", http.request.uri.query, "&platform=meta"))
-)
+https://safezoneready.com/meta
 ```
 
 Status: **301**. Place this rule first. Do not enable a 200 on the satellite.
 
-Homepage becomes `https://safezoneready.com/?platform=meta`.  
-`https://metasafezone.com/tools` becomes `https://safezoneready.com/tools?platform=meta`.  
-If a path does not exist on the mothership, Pages 404s there (acceptable). Optional later: map unknown satellite paths to `/?platform=meta` only.
+Every satellite URL becomes `https://safezoneready.com/meta`. Do not 301 to `?platform=meta` any more; the mothership pretty path is `/meta`.
 
 ### Bulk Redirect list (if you prefer static rows)
 
@@ -63,25 +57,39 @@ Import as a Bulk Redirect list named `szr-meta-satellite` and attach it to `meta
 
 | Source | Target | Status | Parameters | subpath |
 | --- | --- | --- | --- | --- |
-| `https://metasafezone.com/` | `https://safezoneready.com/?platform=meta` | 301 | preserve none | |
-| `https://www.metasafezone.com/` | `https://safezoneready.com/?platform=meta` | 301 | preserve none | |
-| `https://metasafezone.com/*` | `https://safezoneready.com/:splat?platform=meta` | 301 | include subpath | yes |
-| `https://www.metasafezone.com/*` | `https://safezoneready.com/:splat?platform=meta` | 301 | include subpath | yes |
+| `https://metasafezone.com/` | `https://safezoneready.com/meta` | 301 | preserve none | |
+| `https://www.metasafezone.com/` | `https://safezoneready.com/meta` | 301 | preserve none | |
+| `https://metasafezone.com/*` | `https://safezoneready.com/meta` | 301 | preserve none | |
+| `https://www.metasafezone.com/*` | `https://safezoneready.com/meta` | 301 | preserve none | |
 
-JSON sketch (Bulk Redirect API): see `infra/metasafezone-bulk-redirects.json`.
+JSON sketch (Bulk Redirect API): see `infra/metasafezone-bulk-redirects.json`. That file still lists the old `?platform=meta` targets. When you apply rules, use `/meta` as in the table above.
 
-## 3. What the mothership does with `?platform=`
+## 3. What the mothership does with paths and `?platform=`
 
-Implemented in `apps/web` (`placementFromSearch`):
+Pretty paths (sitemap + satellite):
+
+| Path | Selected overlay |
+| --- | --- |
+| `/meta` | Meta Reels |
+| `/youtube-shorts` | YouTube Shorts |
+| `/tiktok` | TikTok In-Feed |
+| `/` | Strictest combined |
+
+On `/`, these query tokens **replace-navigate** to the pretty path:
+
+| Query | Goes to |
+| --- | --- |
+| `platform=meta` (and `reels`, `meta_reels`) | `/meta` |
+| `platform=youtube` / `shorts` | `/youtube-shorts` |
+| `platform=tiktok` | `/tiktok` |
+
+Other tokens still select an overlay via `placementFromSearch` without changing the path:
 
 | Query | Selected overlay |
 | --- | --- |
-| `platform=meta` (and `reels`, `meta_reels`) | Meta Reels |
 | `platform=stories` / `meta_stories` | Meta Stories |
 | `platform=feed` / `meta_feed_4x5` | Meta Feed 4:5 |
-| `platform=youtube` / `shorts` | YouTube Shorts |
-| `platform=tiktok` | TikTok In-Feed |
-| missing / `combined` | Strictest combined |
+| `platform=meta_feed_1x1` | Meta Feed 1:1 |
 
 Score cards for every platform stay on screen. This is a deep link, not a Meta-only product.
 

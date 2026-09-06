@@ -1,4 +1,4 @@
-# Safe Zone Ready — context for this folder
+# Safe Zone Ready: context for this folder
 
 Read this before you edit anything. Canonical product spec is `docs/SPEC.md`. This file is the short version for a human or an agent sitting in this repo.
 
@@ -25,7 +25,7 @@ A media buyer about to spend. They do not want “ink in chrome 70”, Gemini, S
 - Free check is local (`FileReader`). Nothing uploads for a score.
 - Auth (Google) before the first AI fix. Two free fixes per account, then Stripe packs (£9 / 20, £29 / 80).
 - Scores are practical overlays, not platform certification.
-- Do not brand the product “Meta Safe Zone”. `metasafezone.com` is SEO only. It 301s to `https://safezoneready.com/?platform=meta`. Do not host the app there. Do not put that host in CORS, OAuth, Stripe or Turnstile.
+- Do not brand the product “Meta Safe Zone”. `metasafezone.com` is SEO only. It 301s to `https://safezoneready.com/meta`. Do not host the app there. Do not put that host in CORS, OAuth, Stripe or Turnstile.
 - `www.safezoneready.com` 301s to the apex.
 - Affiliation, SynthID, 72h retention: legal footer or legal pages only. Not the tool chrome.
 - No public Gemini proxy. Key lives on the Worker only.
@@ -90,8 +90,8 @@ Copy `.env.example` to `apps/api/.dev.vars` and `apps/worker/.dev.vars` when you
 
 ## What is live vs stub
 
-Live: local overlay check, scores, buyer copy, staging Pages + API health on Cloudflare Clients (`alex@gr.agency`).  
-Stub until secrets: Google OAuth, Stripe, Gemini edits, R2 uploads. Fix UI is a mock.
+Live: local overlay check, scores, buyer copy, indexable pages (`/`, `/meta`, `/youtube-shorts`, `/tiktok`, `/privacy`, `/terms`), unique meta, JSON-LD, prerendered HTML, OG image, staging Pages + API health on Cloudflare Clients (`alex@gr.agency`).  
+Stub until secrets: Google OAuth, Stripe, Gemini edits, R2 uploads. Fix UI is a mock. Production domain attaching still needs a dashboard click.
 
 Staging ids: `infra/staging.json`. Custom domain: https://staging.safezoneready.com
 
@@ -100,7 +100,7 @@ Staging ids: `infra/staging.json`. Custom domain: https://staging.safezoneready.
 Buyer labels live in `packages/safezone-specs/src/copy.ts`.  
 Grades on screen: Ready / Tight / Covered.  
 Never print occupancy, ink, chrome, spec versions, or “at_risk” in the UI.  
-`?platform=meta` selects Instagram Reels (satellite deep link).
+`/meta` selects Instagram Reels (satellite deep link). `?platform=meta` on `/` replace-navigates there.
 
 ## If you are an agent
 
@@ -121,5 +121,6 @@ Never print occupancy, ink, chrome, spec versions, or “at_risk” in the UI.
 | `docs/SECURITY.md` | Abuse, retention, incident |
 | `docs/PRICING.md` | Pack maths |
 | `docs/SEO.md` | Titles, satellites, sitemap |
+| `docs/LAUNCH.md` | Index, analytics, Google, legal ops |
 | `infra/redirects.md` | Domain 301s |
 | `infra/README.md` | Wrangler / staging |

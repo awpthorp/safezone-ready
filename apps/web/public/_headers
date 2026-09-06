@@ -1,4 +1,15 @@
-https://safezoneready.com/*
+/*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Link: <https://safezoneready.com/>; rel="canonical"
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Cross-Origin-Opener-Policy: same-origin
+
+https://staging.safezoneready.com/*
+  X-Robots-Tag: noindex, nofollow
+
+https://*.pages.dev/*
+  X-Robots-Tag: noindex, nofollow
+
+https://*.*.pages.dev/*
+  X-Robots-Tag: noindex, nofollow

@@ -10,11 +10,13 @@ Canonical spec: [`docs/SPEC.md`](./docs/SPEC.md)
 Threat model: [`docs/SECURITY.md`](./docs/SECURITY.md)
 
 **Product / mothership:** [Safe Zone Ready](https://safezoneready.com) at `safezoneready.com` (Cloudflare Registrar, 4 Sep 2026).  
-**Meta SEO satellite:** `metasafezone.com` 301s to `https://safezoneready.com/?platform=meta`. Do not host the app there. See [`infra/redirects.md`](./infra/redirects.md). Other satellites are not purchased.
+**Meta SEO satellite:** `metasafezone.com` 301s to `https://safezoneready.com/meta`. Do not host the app there. See [`infra/redirects.md`](./infra/redirects.md). Other satellites are not purchased.
 
 ## What works in this repo
 
 - Deterministic overlay checker in `apps/web` (FileReader, no upload).
+- Public pages: `/`, `/meta`, `/youtube-shorts`, `/tiktok`, `/privacy`, `/terms`. Unique meta, JSON-LD, prerendered HTML for crawlers.
+- Optional analytics (empty by default, no scripts in the repo): `VITE_GOOGLE_SITE_VERIFICATION`, `VITE_GA_MEASUREMENT_ID` (`G-...`), `VITE_CF_BEACON_TOKEN`.
 - `@safezone-ready/safezone-specs` geometry, scores, occupancy heuristic, unit tests.
 - Hono API stubs: health, OAuth placeholders, checkout, fix job, Turnstile, rate-limit hooks.
 - Queue worker stub documenting the Gemini Interactions call shape and verify loop.
@@ -120,7 +122,7 @@ Manual equivalent: `npx wrangler d1 create safezone-ready-staging`, `r2 bucket c
 
 1. Mothership `safezoneready.com` is live on Cloudflare Registrar. Set `APP_ORIGIN=https://safezoneready.com`.
 2. `www.safezoneready.com` 301s to the apex (Pages `_redirects`).
-3. `metasafezone.com` + `www` 301 to `https://safezoneready.com/?platform=meta` (zone Redirect Rules, not a second Pages app).
+3. `metasafezone.com` + `www` 301 to `https://safezoneready.com/meta` (zone Redirect Rules, not a second Pages app).
 4. Flip `FIXES_ENABLED` only when staging e2e is green.
 
 ## Next steps for Alex

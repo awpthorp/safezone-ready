@@ -1020,7 +1020,7 @@ Full Privacy Policy and Terms are **Alex + counsel**. Do not invent a company nu
 - [x] Meta satellite purchased: `metasafezone.com` (301 + `?platform=meta`; see `infra/redirects.md`)
 - [ ] Attach Pages custom domains and `/api/*` route on the mothership
 - [ ] Apply satellite Redirect Rules in the `metasafezone.com` zone
-- [ ] Legal pages
+- [x] Legal pages
 - [ ] Soft launch, no fabricated metrics
 
 ### Launch checklist

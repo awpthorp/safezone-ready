@@ -69,7 +69,10 @@ export function FixPanel({ phase, credits, before, after, onStart, onDownload, o
                 <p className="font-mono text-xl tabular-nums">{after.overall}</p>
               </div>
             </div>
-            <Alert>This preview is a stand-in until live edits are switched on.</Alert>
+            <Alert>
+              This preview is a stand-in until live edits are switched on. Live Gemini edits include
+              a SynthID watermark.
+            </Alert>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button onClick={onDownload}>
                 <Download className="h-4 w-4" />

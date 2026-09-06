@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 43173",
-    "build": "tsc --noEmit && vite build",
+    "build": "tsc --noEmit && vite build && node scripts/prerender.mjs",
     "preview": "vite preview --host 0.0.0.0 --port 43173",
     "typecheck": "tsc --noEmit"
   },
@@ -16,6 +16,7 @@
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-router-dom": "^7.18.3",
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
