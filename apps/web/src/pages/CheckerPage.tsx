@@ -1,6 +1,7 @@
 import type { PlacementId } from "@safezone-ready/safezone-specs";
 import { Checker } from "@/components/Checker";
 import { Explainer, ExplainerBody, HomeFaq, WhyItMatters } from "@/components/Explainer";
+import { GoodBadExamples } from "@/components/GoodBadExamples";
 import { SiteShell } from "@/components/layout/SiteShell";
 import { SeoHead } from "@/components/SeoHead";
 import { PAGES, type PageId } from "@/seo/pages";
@@ -17,6 +18,7 @@ export function CheckerPage({ pageId }: { pageId: CheckerPageId }) {
       <Explainer page={page} />
       <Checker key={placement} defaultPlacement={placement} />
       <WhyItMatters />
+      <GoodBadExamples />
       <ExplainerBody page={page} />
       {page.faq ? <HomeFaq items={page.faq} /> : null}
     </SiteShell>

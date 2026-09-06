@@ -63,7 +63,10 @@ export function drawFixedCreative(ctx: CanvasRenderingContext2D, w: number, h: n
   ctx.fillText("Shop now  ·  glow.example", w * 0.5, h * 0.66);
 }
 
-export async function canvasToImage(draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void) {
+export async function canvasToImage(
+  draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void,
+  fileName = "sample-glow-serum.png",
+) {
   const canvas = document.createElement("canvas");
   canvas.width = 1080;
   canvas.height = 1920;
@@ -77,7 +80,7 @@ export async function canvasToImage(draw: (ctx: CanvasRenderingContext2D, w: num
   });
   const url = URL.createObjectURL(blob);
   const image = await loadImage(url);
-  return { image, url, fileName: "sample-glow-serum.png", width: canvas.width, height: canvas.height };
+  return { image, url, fileName, width: canvas.width, height: canvas.height };
 }
 
 export function loadImage(src: string): Promise<HTMLImageElement> {

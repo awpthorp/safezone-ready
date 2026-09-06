@@ -63,6 +63,21 @@ function PreviewMedia({ url, kind }: { url: string; kind: "image" | "video" }) {
   return <img src={url} alt="" className="absolute inset-0 size-full object-cover" />;
 }
 
+export function PhonePreview({
+  url,
+  placementId,
+}: {
+  url: string;
+  placementId: PlacementId;
+}) {
+  return (
+    <div className="relative mx-auto aspect-9/16 w-full max-w-[18rem] overflow-hidden rounded-[min(6vw,1.75rem)] bg-black shadow-xl ring-1 ring-zinc-950/10">
+      <img src={url} alt="" className="absolute inset-0 size-full object-cover" />
+      <PlatformChrome placementId={placementId} />
+    </div>
+  );
+}
+
 function PhoneFrame({ url, kind, placementId, showOverlay }: PreviewStageProps) {
   return (
     <div className="relative mx-auto aspect-9/16 w-full max-w-[22rem] overflow-hidden rounded-[min(6vw,1.75rem)] bg-black shadow-xl ring-1 ring-zinc-950/10">

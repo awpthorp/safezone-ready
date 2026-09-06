@@ -44,6 +44,11 @@ export const HOME_FAQ: FaqItem[] = [
       "Likes, captions and shop buttons sit on the file. If the price or the logo is in that cover, you pay for an impression of an offer nobody can read.",
   },
   {
+    question: "What does a bad still look like?",
+    answer:
+      "The offer sits where the caption and shop button will land. People still see the ad. They do not see the price. Move the offer into the hole and the same still is good.",
+  },
+  {
     question: "Will Instagram Reels cover my offer text?",
     answer:
       "Drop the still. Safe Zone Ready shows where the caption, profile row and buttons sit so you can move the offer before you spend.",

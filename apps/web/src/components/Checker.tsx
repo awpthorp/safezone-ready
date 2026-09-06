@@ -129,35 +129,41 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
     [defaultPlacement, dropLoaded],
   );
 
-  const loadSample = useCallback(async () => {
-    if (busyRef.current) {
-      return;
-    }
-    busyRef.current = true;
-    setBusy(true);
-    setBusyKind("image");
-    setError(null);
-    setFixed(null);
-    setPhase("idle");
-    try {
-      const sample = await canvasToImage(drawSampleCreative);
-      try {
-        const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
-        dropLoaded(creativeRef.current);
-        dropLoaded(fixedRef.current);
-        setCreative({ kind: "image", image: sample.image, url: sample.url, fileName: sample.fileName, report });
-        setActiveId(resolvePlacement(defaultPlacement));
-      } catch (err) {
-        revokeIfBlob(sample.url);
-        throw err;
+  const loadSample = useCallback(
+    async (kind: "bad" | "good") => {
+      if (busyRef.current) {
+        return;
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not build the sample still.");
-    } finally {
-      busyRef.current = false;
-      setBusy(false);
-    }
-  }, [defaultPlacement, dropLoaded]);
+      busyRef.current = true;
+      setBusy(true);
+      setBusyKind("image");
+      setError(null);
+      setFixed(null);
+      setPhase("idle");
+      try {
+        const sample = await canvasToImage(
+          kind === "good" ? drawFixedCreative : drawSampleCreative,
+          kind === "good" ? "sample-glow-good.png" : "sample-glow-bad.png",
+        );
+        try {
+          const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
+          dropLoaded(creativeRef.current);
+          dropLoaded(fixedRef.current);
+          setCreative({ kind: "image", image: sample.image, url: sample.url, fileName: sample.fileName, report });
+          setActiveId(resolvePlacement(defaultPlacement));
+        } catch (err) {
+          revokeIfBlob(sample.url);
+          throw err;
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not build the sample still.");
+      } finally {
+        busyRef.current = false;
+        setBusy(false);
+      }
+    },
+    [defaultPlacement, dropLoaded],
+  );
 
   const startFix = useCallback(async () => {
     if (!creative || creative.kind === "video") {
@@ -254,8 +260,11 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
               <Button disabled={busy} onClick={() => fileInputRef.current?.click()}>
                 Choose a file
               </Button>
-              <Button variant="outline" disabled={busy} onClick={() => void loadSample()}>
-                Try a sample
+              <Button variant="outline" disabled={busy} onClick={() => void loadSample("bad")}>
+                Try a bad example
+              </Button>
+              <Button variant="outline" disabled={busy} onClick={() => void loadSample("good")}>
+                Try a good example
               </Button>
             </div>
             <p className="text-base/7 text-muted-foreground sm:text-sm/6">

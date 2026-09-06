@@ -213,6 +213,23 @@ function whyItMattersHtml() {
     </section>`;
 }
 
+function goodBadHtml() {
+  return `<section class="mx-auto max-w-6xl px-4 py-8" aria-labelledby="examples-heading">
+      <h2 id="examples-heading" class="max-w-[40ch] font-display text-4xl tracking-tight text-balance">A bad still and a good still</h2>
+      <p class="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">Same serum, same 9:16 frame. The only change is where the 50% off sits.</p>
+      <div class="mt-8 grid gap-8 sm:grid-cols-2">
+        <figure>
+          <h3 class="text-base/7 font-semibold sm:text-sm/6">Bad</h3>
+          <figcaption class="mt-3 max-w-[40ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">The 50% off sits in the caption band. Instagram draws the caption, shop button and tab bar on top of it. You pay for an impression of a price nobody can read.</figcaption>
+        </figure>
+        <figure>
+          <h3 class="text-base/7 font-semibold sm:text-sm/6">Good</h3>
+          <figcaption class="mt-3 max-w-[40ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">The 50% off sits in the hole. Likes, caption and shop still appear. The price stays readable.</figcaption>
+        </figure>
+      </div>
+    </section>`;
+}
+
 function explainerBodyHtml(page, nested) {
   const source = page.kind === "home" ? page.paragraphs : page.paragraphs.slice(1);
   if (!source.length && !page.covers?.length) {
@@ -307,6 +324,7 @@ function pageBody(page) {
     </div>
     ${dropZoneHtml()}
     ${whyItMattersHtml()}
+    ${goodBadHtml()}
     ${explainerBodyHtml(page, false)}
     ${faqHtml(page)}`;
 }
