@@ -1,11 +1,22 @@
 import type { FaqItem, PageDef } from "@/seo/pages";
 
+function withStop(text: string): string {
+  const trimmed = text.trimEnd();
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+}
+
 export function Explainer({ page }: { page: PageDef }) {
   const lead = page.kind === "home" ? page.subline : page.paragraphs[0];
   return (
-    <div className="mx-auto max-w-6xl px-4 pt-6 pb-2">
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{page.h1}</h1>
-      {lead ? <p className="mt-2 max-w-prose text-base text-muted-foreground">{lead}</p> : null}
+    <div className="mx-auto max-w-6xl px-4 pt-10 pb-2">
+      <h1 className="max-w-[20ch] font-display text-5xl tracking-tight text-balance">
+        {page.h1}
+      </h1>
+      {lead ? (
+        <p className="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">
+          {withStop(lead)}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -17,15 +28,17 @@ export function ExplainerBody({ page, nested = false }: { page: PageDef; nested?
   }
   const body = (
     <>
-      <div className="flex flex-col gap-3 text-sm text-muted-foreground">
+      <div className="flex flex-col gap-3 text-pretty text-base/7 text-muted-foreground sm:text-sm/6">
         {paragraphs.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
+          <p key={paragraph} className="max-w-[56ch]">
+            {paragraph}
+          </p>
         ))}
       </div>
       {page.covers && page.covers.length > 0 ? (
-        <div className="mt-4">
-          <p className="text-sm font-medium text-foreground">What this overlay covers</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+        <div className="mt-6">
+          <p className="text-base/7 font-medium text-foreground sm:text-sm/6">What this overlay covers</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-base/7 text-muted-foreground sm:text-sm/6">
             {page.covers.map((item) => (
               <li key={item}>{item}</li>
             ))}
@@ -36,23 +49,25 @@ export function ExplainerBody({ page, nested = false }: { page: PageDef; nested?
   );
 
   if (nested) {
-    return <div className="mt-4 max-w-prose">{body}</div>;
+    return <div className="mt-4">{body}</div>;
   }
 
-  return <div className="mx-auto max-w-6xl px-4 py-6">{body}</div>;
+  return <div className="mx-auto max-w-6xl px-4 py-8">{body}</div>;
 }
 
 export function HomeFaq({ items }: { items: FaqItem[] }) {
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-10" aria-labelledby="faq-heading">
-      <h2 id="faq-heading" className="text-lg font-semibold tracking-tight">
+    <section className="mx-auto max-w-6xl px-4 pb-16" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" className="max-w-[40ch] font-display text-4xl tracking-tight text-balance">
         Questions
       </h2>
-      <dl className="mt-4 grid gap-4">
+      <dl className="mt-6 divide-y divide-zinc-950/10">
         {items.map((item) => (
-          <div key={item.question} className="rounded-xl border border-border bg-card p-4">
-            <dt className="text-sm font-medium">{item.question}</dt>
-            <dd className="mt-2 text-sm text-muted-foreground">{item.answer}</dd>
+          <div key={item.question} className="py-5 first:pt-0 last:pb-0">
+            <dt className="text-base/7 font-medium">{item.question}</dt>
+            <dd className="mt-2 max-w-[56ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">
+              {item.answer}
+            </dd>
           </div>
         ))}
       </dl>

@@ -1,7 +1,7 @@
 export const SITE_ORIGIN = "https://safezoneready.com";
 export const SITE_NAME = "Safe Zone Ready";
 export const OG_IMAGE = `${SITE_ORIGIN}/og.png`;
-export const OG_IMAGE_ALT = "Safe Zone Ready overlay on a 9:16 ad still, with a gold dashed safe rectangle and a red hatched caption band covering the offer.";
+export const OG_IMAGE_ALT = "Safe Zone Ready checker with a 9:16 ad still and platform cover over the offer.";
 
 export type CheckerPlacement = "combined" | "meta_reels" | "youtube_shorts" | "tiktok_infeed";
 
@@ -46,12 +46,17 @@ export const HOME_FAQ: FaqItem[] = [
   {
     question: "Does my file get uploaded?",
     answer:
-      "No. A check stays in your browser. You only send the image if you ask us to move the offer.",
+      "No. Scoring runs in your browser. The file is only sent if you ask for an AI edit.",
   },
   {
     question: "Can I check TikTok and YouTube Shorts as well?",
     answer:
       "Yes. One still, then tap Instagram Reels, Stories, Feed, YouTube Shorts or TikTok.",
+  },
+  {
+    question: "Can I check a video?",
+    answer:
+      "Yes. Drop an MP4 or WebM. Scoring samples frames in your browser. AI edits that shift the layout are stills only.",
   },
 ];
 
@@ -63,12 +68,12 @@ export const PAGES: Record<PageId, PageDef> = {
     placement: "combined",
     title: "Check if Instagram, TikTok or YouTube will cover your ad | Safe Zone Ready",
     description:
-      "Drop an ad still. See where captions, buttons and profile rows sit on Instagram, TikTok and YouTube Shorts. Nothing uploads for a check.",
+      "Drop an ad still or clip. See where captions, buttons and profile rows sit on Instagram, TikTok and YouTube Shorts. Nothing uploads for a check.",
     h1: "Check if they will cover your ad",
     ogTitle: "Check if they will cover your ad",
-    subline: "Drop a still. See the cover before you spend.",
+    subline: "Drop a still or a clip. See the cover before you spend.",
     paragraphs: [
-      "Safe Zone Ready is a free checker for ad stills. Drop a PNG, JPEG or WebP and see where Instagram Reels, Stories, Feed, YouTube Shorts and TikTok place captions, profile rows and buttons on your offer. The file stays in your browser. Nothing uploads for a score.",
+      "Safe Zone Ready is a free checker for ad stills and video. Drop a PNG, JPEG, WebP, MP4 or WebM and see where Instagram Reels, Stories, Feed, YouTube Shorts and TikTok place captions, profile rows and buttons on your offer. The file stays in your browser. Nothing uploads for a score.",
       "Media buyers use it as a last look before Ads Manager. Scores are practical overlays from public platform guidance and measured templates. They are not a certification from Meta, Google or TikTok. Always preview in the official ads manager before you spend.",
       "If text sits in a cover band, you can ask for an AI edit that moves the offer without deleting the price, logo or button. That path needs a Google sign-in. Two complimentary edits come with a new account.",
     ],

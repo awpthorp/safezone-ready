@@ -85,7 +85,7 @@ Cloudflare-native is the correct default. Credits beat seats for a single-player
 
 | Capability | Notes |
 | --- | --- |
-| Deterministic overlay checker | Client-side `FileReader` + canvas. PNG / JPEG / WebP only. |
+| Deterministic overlay checker | Client-side object URL + canvas. PNG / JPEG / WebP stills, plus a local MP4 / WebM / MOV clip check (up to 5 sampled frames). |
 | Platforms | Meta Stories, Meta Reels, Meta Feed 1:1, Meta Feed 4:5, YouTube Shorts, TikTok In-Feed, plus a **strictest combined** union. |
 | Scores | 0–100 per placement plus overall, with Ready / Caution / At risk. |
 | Occupancy heuristic | Client estimates “ink” (edge / contrast energy) in danger rects. Not OCR. |
@@ -100,11 +100,12 @@ Cloudflare-native is the correct default. Credits beat seats for a single-player
 | Abuse | WAF, Bot Fight, Turnstile, rate limits, MIME + magic bytes, job caps, kill switch. |
 | Upsell | Soft Posterly link after successful download. Link only. No SSO, no embed. |
 | Legal | Disclaimers, SynthID notice, privacy summary. |
-| Images only | Max 20 MB, max 8192 px on the long edge, min 320 px on the short edge. |
+| Stills | Max 20 MB, max 8192 px on the long edge, min 320 px on the short edge. |
+| Local video check | MP4 / WebM / MOV / M4V in the tab. Max 40 MB, max 180 s. Same pixel limits on `videoWidth` / `videoHeight`. Occupancy is the max per region across sampled frames. No upload. No ffmpeg. |
 
 ### 2.2 Explicit non-goals (do not build)
 
-- Video (MP4, MOV, WebM), frame scrubbing, or audio.
+- AI video edit, ffmpeg on the server, CapCut timelines, or worker ingest of video.
 - Pushing creatives into Meta Ads Manager, TikTok Ads Manager, or Google Ads.
 - Figma plugin, Photoshop plugin, or browser extension.
 - Teams, seats, SSO/SAML, SCIM, brand kits, or folders of many assets.
@@ -118,7 +119,7 @@ Cloudflare-native is the correct default. Credits beat seats for a single-player
 
 ### 2.3 v1+ (scheduled after MVP is live and instrumented)
 
-- Video first-frame and mid-frame checks; later full-timeline sampling.
+- AI video edits, worker ingest of video, and a timeline editor.
 - Batch ZIP of stills.
 - Saved “must-keep” brand strings and logo hashes per account.
 - Manual region lock (user paints “never cover / never delete”).
@@ -138,7 +139,7 @@ All journeys below are normative for UX copy and API gates.
 ### 3.1 Anon: local check (no account)
 
 1. Visitor lands on `https://safezoneready.com/` (or is 301'd from `metasafezone.com` to `/?platform=meta`).
-2. They drop or pick a PNG / JPEG / WebP. The file stays in browser memory (`FileReader` → `Image` → canvas). **No upload.**
+2. They drop or pick a PNG / JPEG / WebP still or an MP4 / WebM clip. The file stays in browser memory (object URL → image or muted video element → canvas). **No upload.**
 3. Default view: **strictest combined** overlay, unless `?platform=meta` (Meta Reels selected), `youtube`, or `tiktok`. Per-platform score cards stay visible.
 4. They toggle Meta Stories, Reels, Feed 1:1, Feed 4:5, YouTube Shorts, TikTok.
 5. Scores update instantly from `@safezone-ready/safezone-specs`.
@@ -245,7 +246,7 @@ flowchart LR
   subgraph browser [Browser]
     UI[apps/web Pages]
     Specs[safezone-specs WASM-free TS]
-    UI -->|FileReader local score| Specs
+    UI -->|object URL local score| Specs
   end
 
   subgraph edge [Cloudflare]

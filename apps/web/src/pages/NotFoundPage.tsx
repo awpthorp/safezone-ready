@@ -10,14 +10,14 @@ export function NotFoundPage() {
     <SiteShell>
       <SeoHead page={page} noindex />
       <div className="mx-auto max-w-6xl px-4 py-16">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{page.h1}</h1>
+        <h1 className="max-w-[20ch] font-display text-5xl tracking-tight text-balance">{page.h1}</h1>
         {page.paragraphs.map((paragraph) => (
-          <p key={paragraph} className="mt-3 max-w-prose text-sm text-muted-foreground">
+          <p key={paragraph} className="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">
             {paragraph}
           </p>
         ))}
-        <p className="mt-6">
-          <Link className="text-sm text-primary underline underline-offset-2" to="/">
+        <p className="mt-8">
+          <Link className="text-base/7 underline underline-offset-2 sm:text-sm/6" to="/">
             Back to the checker
           </Link>
         </p>

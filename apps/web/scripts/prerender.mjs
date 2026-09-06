@@ -134,34 +134,30 @@ function applyHead(html, page, { noindex = false, canonical } = {}) {
 
 function headerHtml(activePath) {
   const links = NAV.map((item) => {
-    const active = item.href === activePath || (item.href === "/" && activePath === "/");
+    const active = item.href === activePath;
     const cls = active
-      ? "text-primary"
-      : "text-muted-foreground hover:text-foreground";
+      ? "text-base/7 text-foreground sm:text-sm/6"
+      : "text-base/7 text-muted-foreground sm:text-sm/6";
     return `<a href="${item.href}" class="${cls}">${escapeHtml(item.label)}</a>`;
   }).join("");
-  return `<header class="border-b border-border">
-      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
-        <a href="/" class="flex items-center gap-2 text-sm font-semibold tracking-tight">
-          <span class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground" aria-hidden="true">
-            <svg viewBox="0 0 16 16" class="h-3.5 w-3.5" fill="none">
-              <path d="M3.5 8.5 6.5 11.5 12.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </span>
-          ${escapeHtml(SITE_NAME)}
-        </a>
-        <nav aria-label="Primary" class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm sm:gap-x-4">${links}</nav>
+  return `<header class="border-b border-zinc-950/10 bg-background">
+      <div class="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3">
+        <div class="flex flex-1 items-center">
+          <a href="/" aria-label="Homepage" class="font-display text-2xl tracking-tight">${escapeHtml(SITE_NAME)}</a>
+        </div>
+        <nav aria-label="Primary" class="flex items-center gap-x-6">${links}</nav>
+        <div class="flex flex-1"></div>
       </div>
     </header>`;
 }
 
 function footerHtml() {
-  return `<footer class="border-t border-border">
-      <div class="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-        <p>${escapeHtml(SITE_NAME)}</p>
-        <nav aria-label="Legal" class="flex flex-wrap items-center gap-x-4 gap-y-1">
-          <a class="hover:text-foreground" href="/privacy">Privacy</a>
-          <a class="hover:text-foreground" href="/terms">Terms</a>
+  return `<footer class="border-t border-zinc-950/10">
+      <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
+        <p class="font-display text-xl">${escapeHtml(SITE_NAME)}</p>
+        <nav aria-label="Legal" class="flex flex-wrap items-center gap-x-5 gap-y-2 text-base/7 text-muted-foreground sm:text-sm/6">
+          <a class="font-normal" href="/privacy">Privacy</a>
+          <a class="font-normal" href="/terms">Terms</a>
           <span>Not affiliated with Meta, Google or TikTok.</span>
         </nav>
       </div>
@@ -169,20 +165,25 @@ function footerHtml() {
 }
 
 function dropZoneHtml() {
-  return `<section class="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
-      <div class="flex flex-col gap-4">
-        <div class="flex min-h-[22rem] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-card px-6 py-10 text-center">
+  return `<section class="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
+      <div class="flex min-w-0 flex-col gap-4">
+        <div class="flex min-h-[22rem] flex-col items-center justify-center gap-4 rounded-(--radius) bg-white px-6 py-10 text-center ring-1 ring-zinc-950/10">
           <div>
-            <p class="text-base font-medium">Drop the ad still</p>
-            <p class="mt-1 text-sm text-muted-foreground">See where Instagram, TikTok and YouTube sit on the offer. The file stays in this tab.</p>
+            <p class="text-lg font-medium">Drop the still or clip</p>
+            <p class="mt-2 max-w-[40ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">See Instagram, TikTok and YouTube chrome on the offer. The file stays in this tab.</p>
           </div>
-          <p class="text-xs text-muted-foreground">PNG, JPEG or WebP.</p>
+          <p class="text-base/7 text-muted-foreground sm:text-sm/6">PNG, JPEG, WebP, MP4 or WebM.</p>
         </div>
       </div>
       <aside class="flex flex-col gap-4">
-        <div class="rounded-lg border border-border bg-card/80 px-3 py-2 text-sm text-muted-foreground">Checks stay on this computer. Nothing uploads until you ask us to move the offer.</div>
+        <div class="rounded-md bg-muted px-3 py-2 text-base/7 text-muted-foreground sm:text-sm/6">Scoring runs in your browser. The file is not uploaded unless you ask for an AI edit.</div>
       </aside>
     </section>`;
+}
+
+function withStop(text) {
+  const trimmed = text.trimEnd();
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
 function explainerBodyHtml(page, nested) {
@@ -191,21 +192,21 @@ function explainerBodyHtml(page, nested) {
     return "";
   }
   const paragraphs = source
-    .map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`)
+    .map((paragraph) => `<p class="max-w-[56ch]">${escapeHtml(paragraph)}</p>`)
     .join("");
   const covers = page.covers?.length
-    ? `<div class="mt-4">
-          <p class="text-sm font-medium text-foreground">What this overlay covers</p>
-          <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">${page.covers
+    ? `<div class="mt-6">
+          <p class="text-base/7 font-medium text-foreground sm:text-sm/6">What this overlay covers</p>
+          <ul class="mt-2 list-disc space-y-1 pl-5 text-base/7 text-muted-foreground sm:text-sm/6">${page.covers
             .map((item) => `<li>${escapeHtml(item)}</li>`)
             .join("")}</ul>
         </div>`
     : "";
-  const inner = `<div class="flex flex-col gap-3 text-sm text-muted-foreground">${paragraphs}</div>${covers}`;
+  const inner = `<div class="flex flex-col gap-3 text-pretty text-base/7 text-muted-foreground sm:text-sm/6">${paragraphs}</div>${covers}`;
   if (nested) {
-    return `<div class="mt-4 max-w-prose">${inner}</div>`;
+    return `<div class="mt-4">${inner}</div>`;
   }
-  return `<div class="mx-auto max-w-6xl px-4 py-6">${inner}</div>`;
+  return `<div class="mx-auto max-w-6xl px-4 py-8">${inner}</div>`;
 }
 
 function faqHtml(page) {
@@ -214,15 +215,15 @@ function faqHtml(page) {
   }
   const items = page.faq
     .map(
-      (item) => `<div class="rounded-xl border border-border bg-card p-4">
-            <dt class="text-sm font-medium">${escapeHtml(item.question)}</dt>
-            <dd class="mt-2 text-sm text-muted-foreground">${escapeHtml(item.answer)}</dd>
+      (item) => `<div class="py-5 first:pt-0 last:pb-0">
+            <dt class="text-base/7 font-medium">${escapeHtml(item.question)}</dt>
+            <dd class="mt-2 max-w-[56ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">${escapeHtml(item.answer)}</dd>
           </div>`,
     )
     .join("");
-  return `<section class="mx-auto max-w-6xl px-4 pb-10" aria-labelledby="faq-heading">
-      <h2 id="faq-heading" class="text-lg font-semibold tracking-tight">Questions</h2>
-      <dl class="mt-4 grid gap-4">${items}</dl>
+  return `<section class="mx-auto max-w-6xl px-4 pb-16" aria-labelledby="faq-heading">
+      <h2 id="faq-heading" class="max-w-[40ch] font-display text-4xl tracking-tight text-balance">Questions</h2>
+      <dl class="mt-6 divide-y divide-zinc-950/10">${items}</dl>
     </section>`;
 }
 
@@ -233,31 +234,34 @@ function legalHtml(page) {
       const paragraphs = section.paragraphs
         .map(
           (paragraph) =>
-            `<p class="mt-3 text-sm leading-relaxed text-muted-foreground">${escapeHtml(paragraph)}</p>`,
+            `<p class="mt-3 text-pretty text-base/7 text-muted-foreground">${escapeHtml(paragraph)}</p>`,
         )
         .join("");
-      return `<section class="mt-8">
-            <h2 class="text-base font-semibold tracking-tight">${escapeHtml(section.heading)}</h2>
+      return `<section class="mt-10">
+            <h2 class="text-xl font-semibold text-balance">${escapeHtml(section.heading)}</h2>
             ${paragraphs}
           </section>`;
     })
     .join("");
-  return `<article class="mx-auto max-w-prose px-4 py-10">
-        <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">${escapeHtml(doc.h1)}</h1>
-        <p class="mt-2 text-sm text-muted-foreground">Last updated ${escapeHtml(doc.updated)}</p>
+  return `<article class="mx-auto max-w-prose px-4 py-12">
+        <h1 class="font-display text-5xl tracking-tight text-balance">${escapeHtml(doc.h1)}</h1>
+        <p class="mt-3 text-base/7 text-muted-foreground sm:text-sm/6">Last updated ${escapeHtml(doc.updated)}.</p>
         ${sections}
       </article>`;
 }
 
 function notFoundHtml(page) {
   const paragraphs = page.paragraphs
-    .map((paragraph) => `<p class="mt-3 max-w-prose text-sm text-muted-foreground">${escapeHtml(paragraph)}</p>`)
+    .map(
+      (paragraph) =>
+        `<p class="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">${escapeHtml(paragraph)}</p>`,
+    )
     .join("");
   return `<div class="mx-auto max-w-6xl px-4 py-16">
-      <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">${escapeHtml(page.h1)}</h1>
+      <h1 class="max-w-[20ch] font-display text-5xl tracking-tight text-balance">${escapeHtml(page.h1)}</h1>
       ${paragraphs}
-      <p class="mt-6">
-        <a class="text-sm text-primary underline underline-offset-2" href="/">Back to the checker</a>
+      <p class="mt-8">
+        <a class="text-base/7 underline underline-offset-2 sm:text-sm/6" href="/">Back to the checker</a>
       </p>
     </div>`;
 }
@@ -270,9 +274,9 @@ function pageBody(page) {
     return notFoundHtml(page);
   }
   const lead = page.kind === "home" ? page.subline : page.paragraphs[0];
-  return `<div class="mx-auto max-w-6xl px-4 pt-6 pb-2">
-      <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">${escapeHtml(page.h1)}</h1>
-      ${lead ? `<p class="mt-2 max-w-prose text-base text-muted-foreground">${escapeHtml(lead)}</p>` : ""}
+  return `<div class="mx-auto max-w-6xl px-4 pt-10 pb-2">
+      <h1 class="max-w-[20ch] font-display text-5xl tracking-tight text-balance">${escapeHtml(page.h1)}</h1>
+      ${lead ? `<p class="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">${escapeHtml(withStop(lead))}</p>` : ""}
     </div>
     ${dropZoneHtml()}
     ${explainerBodyHtml(page, false)}

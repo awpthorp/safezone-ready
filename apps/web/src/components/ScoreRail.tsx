@@ -7,7 +7,6 @@ import {
   type ScoreReport,
 } from "@safezone-ready/safezone-specs";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const GRADE_LABEL: Record<Grade, string> = {
@@ -30,28 +29,24 @@ interface ScoreRailProps {
 
 export function ScoreRail({ report, activeId, onSelect }: ScoreRailProps) {
   return (
-    <div className="flex flex-col gap-3">
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between gap-3">
-            <CardTitle>Will they cover it?</CardTitle>
-            <Badge variant={GRADE_VARIANT[report.grade]}>{GRADE_LABEL[report.grade]}</Badge>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="font-mono text-4xl font-medium tracking-tight tabular-nums">{report.overall}</p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            {report.width} × {report.height}
+    <div className="flex flex-col gap-6">
+      <div>
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="text-base font-semibold text-balance sm:text-sm">Will they cover it?</h2>
+          <Badge variant={GRADE_VARIANT[report.grade]}>{GRADE_LABEL[report.grade]}</Badge>
+        </div>
+        <p className="mt-2 font-mono text-5xl font-medium tracking-tight tabular-nums">{report.overall}</p>
+        <p className="mt-1 text-base/7 text-muted-foreground sm:text-sm/6">
+          {report.width} × {report.height}
+        </p>
+        {report.placements.some((p) => p.confidence === "low") ? (
+          <p className="mt-2 text-pretty text-base/7 text-caution sm:text-sm/6">
+            We could not read every edge on this still. Treat the score as a first look.
           </p>
-          {report.placements.some((p) => p.confidence === "low") ? (
-            <p className="mt-2 text-xs text-caution">
-              We could not read every edge on this still. Treat the score as a first look.
-            </p>
-          ) : null}
-        </CardContent>
-      </Card>
+        ) : null}
+      </div>
 
-      <div className="grid gap-2">
+      <div className="flex flex-col divide-y divide-zinc-950/10 overflow-hidden rounded-(--radius) ring-1 ring-zinc-950/10">
         {report.placements.map((placement) => (
           <ScoreRow
             key={placement.placementId}
@@ -77,19 +72,22 @@ function ScoreRow({
   return (
     <button
       type="button"
+      aria-pressed={active}
       onClick={onSelect}
       className={cn(
-        "flex w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left transition-colors",
-        active ? "border-primary bg-accent" : "border-border bg-card hover:bg-accent/60",
+        "flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-3 text-left",
+        active ? "bg-muted" : "bg-white",
       )}
     >
       <div className="min-w-0">
-        <p className="text-sm font-medium">{buyerPlacementLabel(placement.placementId)}</p>
-        <p className="text-xs text-muted-foreground">{describePlacementIssue(placement)}</p>
+        <p className="text-base/7 font-medium sm:text-sm/6">{buyerPlacementLabel(placement.placementId)}</p>
+        <p className="text-base/6 text-muted-foreground sm:text-sm/5">{describePlacementIssue(placement)}</p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
         <Badge variant={GRADE_VARIANT[placement.grade]}>{GRADE_LABEL[placement.grade]}</Badge>
-        <span className="w-8 shrink-0 text-right font-mono text-sm tabular-nums">{placement.score}</span>
+        <span className="w-8 shrink-0 text-right font-mono text-base tabular-nums sm:text-sm">
+          {placement.score}
+        </span>
       </div>
     </button>
   );

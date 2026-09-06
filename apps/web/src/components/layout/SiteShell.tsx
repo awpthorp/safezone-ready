@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/layout/SiteHeader";
 
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
-    <div className="relative min-h-screen">
+    <div className="isolate min-h-dvh bg-background">
       <a href="#main" className="skip-link">
         Skip to content
       </a>

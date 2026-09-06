@@ -5,7 +5,7 @@ export function Alert({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       role="status"
-      className={cn("rounded-lg border border-border bg-card/80 px-3 py-2 text-sm text-muted-foreground", className)}
+      className={cn("rounded-md bg-muted px-3 py-2 text-base/7 text-muted-foreground sm:text-sm/6", className)}
       {...props}
     />
   );
@@ -15,7 +15,7 @@ export function AlertError({ className, ...props }: HTMLAttributes<HTMLDivElemen
   return (
     <div
       role="alert"
-      className={cn("rounded-lg border border-risk/40 bg-risk/10 px-3 py-2 text-sm text-risk", className)}
+      className={cn("rounded-md bg-risk/10 px-3 py-2 text-base/7 text-risk sm:text-sm/6", className)}
       {...props}
     />
   );

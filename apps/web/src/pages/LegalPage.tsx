@@ -10,14 +10,14 @@ export function LegalPage({ kind }: { kind: "privacy" | "terms" }) {
   return (
     <SiteShell>
       <SeoHead page={page} />
-      <article className="mx-auto max-w-prose px-4 py-10">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{doc.h1}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Last updated {doc.updated}</p>
+      <article className="mx-auto max-w-prose px-4 py-12">
+        <h1 className="font-display text-5xl tracking-tight text-balance">{doc.h1}</h1>
+        <p className="mt-3 text-base/7 text-muted-foreground sm:text-sm/6">Last updated {doc.updated}.</p>
         {doc.sections.map((section) => (
-          <section key={section.heading} className="mt-8">
-            <h2 className="text-base font-semibold tracking-tight">{section.heading}</h2>
+          <section key={section.heading} className="mt-10">
+            <h2 className="text-xl font-semibold text-balance">{section.heading}</h2>
             {section.paragraphs.map((paragraph) => (
-              <p key={paragraph} className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              <p key={paragraph} className="mt-3 text-pretty text-base/7 text-muted-foreground">
                 {paragraph}
               </p>
             ))}

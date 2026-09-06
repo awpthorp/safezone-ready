@@ -4,7 +4,7 @@ Read this before you edit anything. Canonical product spec is `docs/SPEC.md`. Th
 
 ## What this is
 
-A freemium check for ad stills. Drop a PNG, JPEG or WebP. See where Instagram, TikTok and YouTube will cover the offer. Optionally pay to move the offer so captions and buttons do not sit on it.
+A freemium check for ad stills and video. Drop a PNG, JPEG, WebP, MP4 or WebM. See where Instagram, TikTok and YouTube will cover the offer. Optionally pay to move the offer on a still so captions and buttons do not sit on it. AI edits are stills only.
 
 Working name in code: Safe Zone Ready / `safezone-ready`.  
 Product site: https://safezoneready.com  
@@ -21,8 +21,8 @@ A media buyer about to spend. They do not want “ink in chrome 70”, Gemini, S
 ## Hard rules
 
 - British English in all user-facing copy. No em dashes.
-- Images only for MVP. No video, teams, Figma, or Ads Manager push.
-- Free check is local (`FileReader`). Nothing uploads for a score.
+- Local video check for MVP (MP4 / WebM in the tab). No AI video edit, CapCut timelines, or worker ingest of video. No teams, Figma, or Ads Manager push.
+- Free check is local (object URL in the tab). Nothing uploads for a score.
 - Auth (Google) before the first AI fix. Two free fixes per account, then Stripe packs (£9 / 20, £29 / 80).
 - Scores are practical overlays, not platform certification.
 - Do not brand the product “Meta Safe Zone”. `metasafezone.com` is SEO only. It 301s to `https://safezoneready.com/meta`. Do not host the app there. Do not put that host in CORS, OAuth, Stripe or Turnstile.

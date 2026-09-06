@@ -6,26 +6,35 @@ import {
 } from "@safezone-ready/safezone-specs";
 import { useCallback, useMemo, useRef, useState } from "react";
 import { FixPanel, type FixPhase } from "@/components/FixPanel";
-import { OverlayCanvas } from "@/components/OverlayCanvas";
+import { PreviewStage } from "@/components/preview/PreviewStage";
 import { ScoreRail } from "@/components/ScoreRail";
 import { Alert, AlertError } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { analyseImage, validateFile, validateImageSize } from "@/lib/analyse";
+import {
+  analyseImage,
+  analyseVideo,
+  isVideoFile,
+  validateFile,
+  validateImageSize,
+  validateVideoMeta,
+} from "@/lib/analyse";
+import { createObjectUrl, loadVideo, revokeIfBlob } from "@/lib/media";
 import { placementFromSearch, platformDeepLinkLabel } from "@/lib/platform";
 import {
   canvasToImage,
   drawFixedCreative,
   drawSampleCreative,
-  fileFromReader,
   loadImage,
 } from "@/lib/sampleCreative";
 
-interface LoadedCreative {
-  image: HTMLImageElement;
+type LoadedCreative = {
   url: string;
   fileName: string;
   report: ScoreReport;
-}
+} & (
+  | { kind: "image"; image: HTMLImageElement }
+  | { kind: "video"; video: HTMLVideoElement }
+);
 
 function resolvePlacement(fallback: PlacementId): PlacementId {
   if (typeof window === "undefined") {
@@ -46,17 +55,27 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
   const [showOverlay, setShowOverlay] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [busyKind, setBusyKind] = useState<"image" | "video">("image");
   const [phase, setPhase] = useState<FixPhase>("idle");
   const [credits, setCredits] = useState(2);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const busyRef = useRef(false);
+  const creativeRef = useRef<LoadedCreative | null>(null);
+  const fixedRef = useRef<LoadedCreative | null>(null);
+  creativeRef.current = creative;
+  fixedRef.current = fixed;
 
-  const displayImage = fixed?.image ?? creative?.image;
-  const displayReport = fixed?.report ?? creative?.report;
+  const display = fixed ?? creative;
+  const displayReport = display?.report;
+
+  const dropLoaded = useCallback((item: LoadedCreative | null) => {
+    revokeIfBlob(item?.url);
+  }, []);
 
   const onFile = useCallback(
     async (file: File | undefined) => {
-      if (!file) {
+      if (!file || busyRef.current) {
         return;
       }
       const typeError = validateFile(file);
@@ -64,49 +83,84 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
         setError(typeError);
         return;
       }
+      const videoFile = isVideoFile(file);
+      busyRef.current = true;
       setBusy(true);
+      setBusyKind(videoFile ? "video" : "image");
       setError(null);
       setFixed(null);
       setPhase("idle");
+      const url = createObjectUrl(file);
       try {
-        const dataUrl = await fileFromReader(file);
-        const image = await loadImage(dataUrl);
-        const sizeError = validateImageSize(image.width, image.height);
-        if (sizeError) {
-          setError(sizeError);
-          return;
+        if (videoFile) {
+          const video = await loadVideo(url);
+          const metaError = validateVideoMeta(video);
+          if (metaError) {
+            revokeIfBlob(url);
+            setError(metaError);
+            return;
+          }
+          const { report } = await analyseVideo(video, DEFAULT_PLACEMENT_IDS);
+          dropLoaded(creativeRef.current);
+          dropLoaded(fixedRef.current);
+          setCreative({ kind: "video", video, url, fileName: file.name, report });
+        } else {
+          const image = await loadImage(url);
+          const sizeError = validateImageSize(image.width, image.height);
+          if (sizeError) {
+            revokeIfBlob(url);
+            setError(sizeError);
+            return;
+          }
+          const { report } = analyseImage(image, DEFAULT_PLACEMENT_IDS);
+          dropLoaded(creativeRef.current);
+          dropLoaded(fixedRef.current);
+          setCreative({ kind: "image", image, url, fileName: file.name, report });
         }
-        const { report } = analyseImage(image, DEFAULT_PLACEMENT_IDS);
-        setCreative({ image, url: dataUrl, fileName: file.name, report });
         setActiveId(resolvePlacement(defaultPlacement));
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not read that image.");
+        revokeIfBlob(url);
+        setError(err instanceof Error ? err.message : "Could not read that file.");
       } finally {
+        busyRef.current = false;
         setBusy(false);
       }
     },
-    [defaultPlacement],
+    [defaultPlacement, dropLoaded],
   );
 
   const loadSample = useCallback(async () => {
+    if (busyRef.current) {
+      return;
+    }
+    busyRef.current = true;
     setBusy(true);
+    setBusyKind("image");
     setError(null);
     setFixed(null);
     setPhase("idle");
     try {
       const sample = await canvasToImage(drawSampleCreative);
-      const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
-      setCreative({ ...sample, report });
-      setActiveId(resolvePlacement(defaultPlacement));
+      try {
+        const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
+        dropLoaded(creativeRef.current);
+        dropLoaded(fixedRef.current);
+        setCreative({ kind: "image", image: sample.image, url: sample.url, fileName: sample.fileName, report });
+        setActiveId(resolvePlacement(defaultPlacement));
+      } catch (err) {
+        revokeIfBlob(sample.url);
+        throw err;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not build the sample still.");
     } finally {
+      busyRef.current = false;
       setBusy(false);
     }
-  }, [defaultPlacement]);
+  }, [defaultPlacement, dropLoaded]);
 
   const startFix = useCallback(async () => {
-    if (!creative) {
+    if (!creative || creative.kind === "video") {
       return;
     }
     if (credits <= 0) {
@@ -119,18 +173,24 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
     await wait(1100);
     try {
       const sample = await canvasToImage(drawFixedCreative);
-      const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
-      setFixed({ ...sample, report });
-      setCredits((n) => n - 1);
-      setPhase("done");
+      try {
+        const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
+        dropLoaded(fixedRef.current);
+        setFixed({ kind: "image", image: sample.image, url: sample.url, fileName: sample.fileName, report });
+        setCredits((n) => n - 1);
+        setPhase("done");
+      } catch (err) {
+        revokeIfBlob(sample.url);
+        throw err;
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "The edit failed. Try another still.");
       setPhase("idle");
     }
-  }, [creative, credits]);
+  }, [creative, credits, dropLoaded]);
 
   const downloadFixed = useCallback(() => {
-    if (!fixed) {
+    if (!fixed || fixed.kind !== "image") {
       return;
     }
     const link = document.createElement("a");
@@ -140,21 +200,26 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
   }, [fixed]);
 
   const reset = useCallback(() => {
+    dropLoaded(creativeRef.current);
+    dropLoaded(fixedRef.current);
+    creativeRef.current = null;
+    fixedRef.current = null;
     setCreative(null);
     setFixed(null);
     setPhase("idle");
     setError(null);
-  }, []);
+  }, [dropLoaded]);
 
   const hint = useMemo(() => (displayReport ? describeReportHint(displayReport) : null), [displayReport]);
+  const busyText = busyKind === "video" ? "Reading the clip…" : "Reading the still…";
 
   return (
-    <section className="mx-auto grid max-w-6xl gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
-      <div className="flex flex-col gap-4">
+    <section className="mx-auto grid max-w-6xl gap-8 px-4 py-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)]">
+      <div className="flex min-w-0 flex-col gap-4">
         {!creative ? (
           <div
-            className={`flex min-h-[22rem] flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-6 py-10 text-center transition-colors ${
-              dragOver ? "border-primary bg-accent" : "border-border bg-card"
+            className={`flex min-h-[22rem] flex-col items-center justify-center gap-4 rounded-(--radius) px-6 py-10 text-center ring-1 ring-zinc-950/10 ${
+              dragOver ? "bg-muted" : "bg-white"
             }`}
             onDragOver={(e) => {
               e.preventDefault();
@@ -168,15 +233,17 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
             }}
           >
             <div>
-              <p className="text-base font-medium">Drop the ad still</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                See where Instagram, TikTok and YouTube sit on the offer. The file stays in this tab.
+              <p className="text-lg font-medium">Drop the still or clip</p>
+              <p className="mt-2 max-w-[40ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">
+                See Instagram, TikTok and YouTube chrome on the offer. The file stays in this tab.
               </p>
             </div>
             <input
               ref={fileInputRef}
+              id="creative-file"
+              name="creative"
               type="file"
-              accept="image/png,image/jpeg,image/webp"
+              accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime,video/x-m4v,.mp4,.webm,.mov,.m4v"
               className="sr-only"
               onChange={(e) => {
                 void onFile(e.target.files?.[0]);
@@ -184,49 +251,61 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
               }}
             />
             <div className="flex flex-wrap justify-center gap-2">
-              <Button type="button" variant="outline" disabled={busy} onClick={() => fileInputRef.current?.click()}>
+              <Button disabled={busy} onClick={() => fileInputRef.current?.click()}>
                 Choose a file
               </Button>
-              <Button type="button" variant="secondary" disabled={busy} onClick={() => void loadSample()}>
-                {busy ? "Preparing…" : "Try a sample"}
+              <Button variant="outline" disabled={busy} onClick={() => void loadSample()}>
+                Try a sample
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">PNG, JPEG or WebP.</p>
+            <p className="text-base/7 text-muted-foreground sm:text-sm/6">
+              {busy ? busyText : "PNG, JPEG, WebP, MP4 or WebM."}
+            </p>
           </div>
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="truncate text-sm text-muted-foreground">{creative.fileName}</p>
+              <p className="min-w-0 truncate text-base/7 text-muted-foreground sm:text-sm/6">
+                {creative.fileName}
+              </p>
               <div className="flex flex-wrap gap-2">
-                <Button type="button" size="sm" variant="outline" onClick={() => setShowOverlay((v) => !v)}>
+                <Button size="sm" variant="outline" onClick={() => setShowOverlay((v) => !v)}>
                   {showOverlay ? "Hide cover" : "Show cover"}
                 </Button>
-                <Button type="button" size="sm" variant="ghost" onClick={reset}>
-                  Clear
+                <Button size="sm" variant="ghost" onClick={reset}>
+                  Start over
                 </Button>
               </div>
             </div>
-            {displayImage ? (
-              <OverlayCanvas image={displayImage} placementId={activeId} showOverlay={showOverlay} />
+            {display ? (
+              <PreviewStage
+                url={display.url}
+                kind={display.kind}
+                placementId={activeId}
+                showOverlay={showOverlay}
+              />
             ) : null}
-            {hint ? <p className="text-sm text-muted-foreground">{hint}</p> : null}
+            {hint ? (
+              <p className="text-pretty text-base/7 text-muted-foreground sm:text-sm/6">{hint}</p>
+            ) : null}
           </>
         )}
 
         {deepLinkLabel && !creative ? <Alert>{deepLinkLabel}</Alert> : null}
         {error ? <AlertError>{error}</AlertError> : null}
-        {busy && creative ? <Alert>Reading the still…</Alert> : null}
+        {busy && creative ? <Alert>{busyText}</Alert> : null}
       </div>
 
       <aside className="flex flex-col gap-4">
         {displayReport ? (
           <ScoreRail report={displayReport} activeId={activeId} onSelect={setActiveId} />
         ) : (
-          <Alert>Checks stay on this computer. Nothing uploads until you ask us to move the offer.</Alert>
+          <Alert>Scoring runs in your browser. The file is not uploaded unless you ask for an AI edit.</Alert>
         )}
 
         {creative ? (
           <FixPanel
+            kind={creative.kind}
             phase={phase}
             credits={credits}
             before={creative.report}
