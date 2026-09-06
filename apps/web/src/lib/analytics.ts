@@ -1,7 +1,13 @@
+const DATAFAST_WEBSITE_ID = "dfid_YmcRcHzFPY2hogFvefTFA";
+const DATAFAST_DOMAIN = "safezoneready.com";
+
+type DataFastFn = ((...args: unknown[]) => void) & { q?: unknown[] };
+
 declare global {
   interface Window {
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
+    datafast?: DataFastFn;
   }
 }
 
@@ -24,11 +30,38 @@ export function cfBeaconToken(): string {
   return envValue("VITE_CF_BEACON_TOKEN");
 }
 
+function isMothershipHost(): boolean {
+  const host = window.location.hostname;
+  return host === "safezoneready.com" || host === "www.safezoneready.com";
+}
+
+function startDataFast(): void {
+  if (!isMothershipHost() || document.getElementById("datafast-script")) {
+    return;
+  }
+  if (!window.datafast) {
+    const queued: DataFastFn = function datafast() {
+      queued.q = queued.q ?? [];
+      queued.q.push(arguments);
+    };
+    window.datafast = queued;
+  }
+
+  const script = document.createElement("script");
+  script.id = "datafast-script";
+  script.defer = true;
+  script.src = "https://datafa.st/js/script.js";
+  script.setAttribute("data-website-id", DATAFAST_WEBSITE_ID);
+  script.setAttribute("data-domain", DATAFAST_DOMAIN);
+  document.head.appendChild(script);
+}
+
 export function startAnalytics(): void {
   if (started || typeof window === "undefined" || typeof document === "undefined") {
     return;
   }
   started = true;
+  startDataFast();
 
   const ga = gaMeasurementId();
   if (ga) {

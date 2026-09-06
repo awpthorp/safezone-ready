@@ -38,7 +38,7 @@ export const privacyDoc: LegalDoc = {
       heading: "Cookies and sign-in",
       paragraphs: [
         "We only set a session cookie after you sign in. A local check does not set an account cookie.",
-        "If we later load Google Analytics, we will say so on this page and add a cookie notice where UK or EU law requires it. Cloudflare Web Analytics, if enabled, is cookieless.",
+        "On safezoneready.com we load DataFast to count visits and referrers. That script may set a first-party analytics cookie. We do not load it on staging, Pages previews or localhost. If we later load Google Analytics, we will say so here and add a cookie notice where UK or EU law requires it. Cloudflare Web Analytics, if enabled, is cookieless.",
       ],
     },
     {

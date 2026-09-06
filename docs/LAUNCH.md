@@ -46,6 +46,7 @@ Env vars (web / Pages only). Empty means no script is loaded.
 | `VITE_GA_MEASUREMENT_ID` | GA4 `G-...` via gtag. Optional. UK/EU may need a cookie notice before this goes live |
 | `VITE_GOOGLE_SITE_VERIFICATION` | `<meta name="google-site-verification">` if you prefer HTML tag over DNS TXT |
 
+- [x] DataFast on the mothership only (`safezoneready.com` and `www`). Website id `dfid_YmcRcHzFPY2hogFvefTFA`. Staging, `*.pages.dev` and localhost do not load the script. Counts start when apex DNS is live.
 - [ ] Prefer Cloudflare Web Analytics first: [Web Analytics](https://dash.cloudflare.com/?to=/:account/web-analytics) on the mothership zone. Paste the token into Pages env as `VITE_CF_BEACON_TOKEN` and rebuild
 - [ ] Optional GA4: [analytics.google.com](https://analytics.google.com). Create a GA4 property, web stream for `https://safezoneready.com`. Do not enable until counsel is happy with a cookie notice
 - [ ] Search Console verification: DNS TXT (preferred) or `VITE_GOOGLE_SITE_VERIFICATION`

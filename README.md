@@ -16,7 +16,7 @@ Threat model: [`docs/SECURITY.md`](./docs/SECURITY.md)
 
 - Deterministic overlay checker in `apps/web` (FileReader, no upload).
 - Public pages: `/`, `/meta`, `/youtube-shorts`, `/tiktok`, `/privacy`, `/terms`. Unique meta, JSON-LD, prerendered HTML for crawlers.
-- Optional analytics (empty by default, no scripts in the repo): `VITE_GOOGLE_SITE_VERIFICATION`, `VITE_GA_MEASUREMENT_ID` (`G-...`), `VITE_CF_BEACON_TOKEN`.
+- DataFast on `safezoneready.com` / `www` only. Optional extras (empty means off): `VITE_GOOGLE_SITE_VERIFICATION`, `VITE_GA_MEASUREMENT_ID` (`G-...`), `VITE_CF_BEACON_TOKEN`.
 - `@safezone-ready/safezone-specs` geometry, scores, occupancy heuristic, unit tests.
 - Hono API stubs: health, OAuth placeholders, checkout, fix job, Turnstile, rate-limit hooks.
 - Queue worker stub documenting the Gemini Interactions call shape and verify loop.
