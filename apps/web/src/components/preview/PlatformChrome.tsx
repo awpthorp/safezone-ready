@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
 import {
-  AppScrims,
   AudioCover,
   GradientAvatar,
   HomeIndicator,
@@ -62,11 +61,14 @@ export function PlatformChrome({ placementId }: { placementId: PlacementId }) {
 
 function pctVars(placement: ReturnType<typeof getPlacement>): CSSProperties {
   const { top, bottom, left, right } = placement.margins;
+  const rail = placement.rails[0];
+  const coverRight = rail ? Math.max(right, 1 - rail.x) : right;
   return {
     "--m-top": `${top * 100}%`,
     "--m-bottom": `${bottom * 100}%`,
     "--m-left": `${left * 100}%`,
     "--m-right": `${right * 100}%`,
+    "--c-right": `${coverRight * 100}%`,
   } as CSSProperties;
 }
 
@@ -100,10 +102,22 @@ function ChromeRoot({
   );
 }
 
+function CoverHatch() {
+  return (
+    <>
+      <div className="absolute inset-x-0 top-0 h-(--m-top) cover-hatch" />
+      <div className="absolute inset-x-0 bottom-0 h-(--m-bottom) cover-hatch" />
+      <div className="absolute top-(--m-top) bottom-(--m-bottom) left-0 w-(--m-left) cover-hatch" />
+      <div className="absolute top-(--m-top) bottom-(--m-bottom) right-0 w-(--c-right) cover-hatch" />
+      <div className="absolute top-(--m-top) right-(--c-right) bottom-(--m-bottom) left-(--m-left) border-2 border-dashed border-white/75" />
+    </>
+  );
+}
+
 function ReelsChrome({ placement }: { placement: PlacementSpec }) {
   return (
     <ChromeRoot placement={placement}>
-      <AppScrims />
+      <CoverHatch />
       <div className="absolute inset-x-0 top-0 flex h-(--m-top) flex-col gap-1">
         <StatusBar />
         <div className="flex items-center gap-1.5 px-3">
@@ -153,7 +167,7 @@ function ReelsChrome({ placement }: { placement: PlacementSpec }) {
 function StoriesChrome({ placement }: { placement: PlacementSpec }) {
   return (
     <ChromeRoot placement={placement}>
-      <AppScrims />
+      <CoverHatch />
       <div className="absolute inset-x-0 top-0 flex h-(--m-top) flex-col gap-1">
         <StatusBar />
         <div className="flex gap-1 px-3">
@@ -194,10 +208,7 @@ function StoriesChrome({ placement }: { placement: PlacementSpec }) {
 function FeedChrome({ placement }: { placement: PlacementSpec }) {
   return (
     <ChromeRoot placement={placement}>
-      <div className="absolute inset-x-0 top-0 h-(--m-top) bg-linear-to-b from-black/40 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 h-(--m-bottom) bg-linear-to-t from-black/45 to-transparent" />
-      <div className="absolute top-(--m-top) bottom-(--m-bottom) left-0 w-(--m-left) bg-black/20" />
-      <div className="absolute top-(--m-top) bottom-(--m-bottom) right-0 w-(--m-right) bg-black/20" />
+      <CoverHatch />
     </ChromeRoot>
   );
 }
@@ -205,7 +216,7 @@ function FeedChrome({ placement }: { placement: PlacementSpec }) {
 function ShortsChrome({ placement }: { placement: PlacementSpec }) {
   return (
     <ChromeRoot placement={placement}>
-      <AppScrims />
+      <CoverHatch />
       <div className="absolute inset-x-0 top-0 flex h-(--m-top) flex-col">
         <StatusBar />
         <div className="flex items-center px-3 pt-1">
@@ -253,7 +264,7 @@ function ShortsChrome({ placement }: { placement: PlacementSpec }) {
 function TikTokChrome({ placement }: { placement: PlacementSpec }) {
   return (
     <ChromeRoot placement={placement}>
-      <AppScrims />
+      <CoverHatch />
       <div className="absolute inset-x-0 top-0 flex h-(--m-top) flex-col">
         <StatusBar />
         <div className="relative flex items-center justify-center gap-4 pt-0.5 text-[0.75rem] font-semibold">
@@ -295,24 +306,12 @@ function TikTokChrome({ placement }: { placement: PlacementSpec }) {
 }
 
 function CombinedChrome({ placement }: { placement: PlacementSpec }) {
-  const rail = placement.rails[0];
   return (
-    <div
-      className="pointer-events-none absolute inset-0"
-      aria-hidden="true"
-      style={{ ...pctVars(placement), ...railVars(rail) }}
-    >
-      <div className="absolute inset-x-0 top-0 h-(--m-top) cover-hatch" />
-      <div className="absolute inset-x-0 bottom-0 h-(--m-bottom) cover-hatch" />
-      <div className="absolute top-(--m-top) bottom-(--m-bottom) left-0 w-(--m-left) cover-hatch" />
-      <div className="absolute top-(--m-top) bottom-(--m-bottom) right-0 w-(--m-right) cover-hatch" />
-      {rail ? (
-        <div className="absolute top-(--rail-y) left-(--rail-x) h-(--rail-h) w-(--rail-w) cover-hatch" />
-      ) : null}
-      <div className="absolute top-(--m-top) right-(--m-right) bottom-(--m-bottom) left-(--m-left) border-2 border-dashed border-white/80" />
+    <ChromeRoot placement={placement}>
+      <CoverHatch />
       <div className="absolute inset-x-3 bottom-3 rounded-md bg-black/70 px-2 py-1.5 text-center text-[0.65rem] font-medium text-white">
         Strictest cover: Shorts rail, Reels caption, TikTok sides.
       </div>
-    </div>
+    </ChromeRoot>
   );
 }

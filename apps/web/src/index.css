@@ -63,7 +63,7 @@ body {
 @utility cover-hatch {
   background-image: repeating-linear-gradient(
     -45deg,
-    rgb(185 28 28 / 0.32) 0 5px,
-    rgb(0 0 0 / 0.28) 5px 10px
+    rgb(220 38 38 / 0.18) 0 3px,
+    transparent 3px 8px
   );
 }

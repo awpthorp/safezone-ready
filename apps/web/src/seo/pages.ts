@@ -39,6 +39,11 @@ export function canonicalUrl(path: string): string {
 
 export const HOME_FAQ: FaqItem[] = [
   {
+    question: "Why does the safe zone matter for ads?",
+    answer:
+      "Likes, captions and shop buttons sit on the file. If the price or the logo is in that cover, you pay for an impression of an offer nobody can read.",
+  },
+  {
     question: "Will Instagram Reels cover my offer text?",
     answer:
       "Drop the still. Safe Zone Ready shows where the caption, profile row and buttons sit so you can move the offer before you spend.",

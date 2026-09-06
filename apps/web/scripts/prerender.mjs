@@ -186,6 +186,33 @@ function withStop(text) {
   return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
+function whyItMattersHtml() {
+  const points = [
+    [
+      "Wasted spend",
+      "You pay for the impression. If the price, the logo or the shop button sits under likes and captions, the message is unreadable.",
+    ],
+    [
+      "Brand risk",
+      "The mark or the claim is what must stay visible. A covered logo is not a brand appearance.",
+    ],
+    ["Last look", "Catch it before Ads Manager, not after the budget is live."],
+  ];
+  const items = points
+    .map(
+      ([term, detail]) => `<div class="py-5 first:pt-0 last:pb-0">
+            <dt class="text-base/7 font-medium">${escapeHtml(term)}</dt>
+            <dd class="mt-2 max-w-[56ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">${escapeHtml(detail)}</dd>
+          </div>`,
+    )
+    .join("");
+  return `<section class="mx-auto max-w-6xl px-4 py-8" aria-labelledby="why-heading">
+      <h2 id="why-heading" class="max-w-[40ch] font-display text-4xl tracking-tight text-balance">Why the safe zone matters</h2>
+      <p class="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">Instagram, TikTok and YouTube draw likes, captions, profile rows and shop buttons on top of the file. If the offer sits in that cover, people still see the ad. They do not see the deal.</p>
+      <dl class="mt-6 divide-y divide-zinc-950/10">${items}</dl>
+    </section>`;
+}
+
 function explainerBodyHtml(page, nested) {
   const source = page.kind === "home" ? page.paragraphs : page.paragraphs.slice(1);
   if (!source.length && !page.covers?.length) {
@@ -279,6 +306,7 @@ function pageBody(page) {
       ${lead ? `<p class="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">${escapeHtml(withStop(lead))}</p>` : ""}
     </div>
     ${dropZoneHtml()}
+    ${whyItMattersHtml()}
     ${explainerBodyHtml(page, false)}
     ${faqHtml(page)}`;
 }

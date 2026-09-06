@@ -55,6 +55,51 @@ export function ExplainerBody({ page, nested = false }: { page: PageDef; nested?
   return <div className="mx-auto max-w-6xl px-4 py-8">{body}</div>;
 }
 
+const WHY_POINTS = [
+  {
+    term: "Wasted spend",
+    detail:
+      "You pay for the impression. If the price, the logo or the shop button sits under likes and captions, the message is unreadable.",
+  },
+  {
+    term: "Brand risk",
+    detail:
+      "The mark or the claim is what must stay visible. A covered logo is not a brand appearance.",
+  },
+  {
+    term: "Last look",
+    detail: "Catch it before Ads Manager, not after the budget is live.",
+  },
+] as const;
+
+export function WhyItMatters() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-8" aria-labelledby="why-heading">
+      <h2
+        id="why-heading"
+        className="max-w-[40ch] font-display text-4xl tracking-tight text-balance"
+      >
+        Why the safe zone matters
+      </h2>
+      <p className="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">
+        Instagram, TikTok and YouTube draw likes, captions, profile rows and shop buttons on top of
+        the file. If the offer sits in that cover, people still see the ad. They do not see the
+        deal.
+      </p>
+      <dl className="mt-6 divide-y divide-zinc-950/10">
+        {WHY_POINTS.map((point) => (
+          <div key={point.term} className="py-5 first:pt-0 last:pb-0">
+            <dt className="text-base/7 font-medium">{point.term}</dt>
+            <dd className="mt-2 max-w-[56ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">
+              {point.detail}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 export function HomeFaq({ items }: { items: FaqItem[] }) {
   return (
     <section className="mx-auto max-w-6xl px-4 pb-16" aria-labelledby="faq-heading">

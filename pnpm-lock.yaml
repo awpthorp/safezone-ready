@@ -24,6 +24,8 @@ importers:
         specifier: ^4.34.0
         version: 4.129.0(@cloudflare/workers-types@5.20260904.1)
 
+  apps/meta-redirect: {}
+
   apps/web:
     dependencies:
       '@safezone-ready/safezone-specs':

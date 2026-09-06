@@ -28,16 +28,16 @@ export function PreviewStage({ url, kind, placementId, showOverlay }: PreviewSta
 }
 
 function stageCaption(placementId: PlacementId, label: string, kind: "image" | "video"): string {
-  if (kind === "video") {
-    if (placementId === "combined") {
+  if (placementId === "combined") {
+    if (kind === "video") {
       return "A measurement overlay of the strictest cover across Instagram, Shorts and TikTok, drawn on the playing clip. Scored across sampled frames; the worst cover wins. Caption length and device size can still move the real controls.";
     }
-    return `A practical mock of ${label} on the playing clip, scored across sampled frames. The worst cover wins. Caption length and device size can still move the real controls.`;
-  }
-  if (placementId === "combined") {
     return "A measurement overlay of the strictest cover across Instagram, Shorts and TikTok, drawn to the same guardrails as the score. Caption length and device size can still move the real controls.";
   }
-  return `A practical mock of ${label}, drawn to the same guardrails as the score. Caption length and device size can still move the real controls.`;
+  if (kind === "video") {
+    return `A practical mock of ${label} on the playing clip, with the cover hatched. Scored across sampled frames. The worst cover wins. Caption length and device size can still move the real controls.`;
+  }
+  return `A practical mock of ${label}, with the cover hatched. Drawn to the same guardrails as the score. Caption length and device size can still move the real controls.`;
 }
 
 function PreviewMedia({ url, kind }: { url: string; kind: "image" | "video" }) {
