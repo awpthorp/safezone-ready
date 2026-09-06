@@ -74,8 +74,8 @@ export const PAGES: Record<PageId, PageDef> = {
     title: "Check if Instagram, TikTok or YouTube will cover your ad | Safe Zone Ready",
     description:
       "Drop an ad still or clip. See where captions, buttons and profile rows sit on Instagram, TikTok and YouTube Shorts. Nothing uploads for a check.",
-    h1: "Check if they will cover your ad",
-    ogTitle: "Check if they will cover your ad",
+    h1: "Check if Instagram, TikTok or YouTube will cover your ad",
+    ogTitle: "Check if Instagram, TikTok or YouTube will cover your ad",
     subline: "Drop a still or a clip. See the cover before you spend.",
     paragraphs: [
       "Safe Zone Ready is a free checker for ad stills and video. Drop a PNG, JPEG, WebP, MP4 or WebM and see where Instagram Reels, Stories, Feed, YouTube Shorts and TikTok place captions, profile rows and buttons on your offer. The file stays in your browser. Nothing uploads for a score.",

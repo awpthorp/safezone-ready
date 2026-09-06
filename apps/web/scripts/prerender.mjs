@@ -302,7 +302,7 @@ function pageBody(page) {
   }
   const lead = page.kind === "home" ? page.subline : page.paragraphs[0];
   return `<div class="mx-auto max-w-6xl px-4 pt-10 pb-2">
-      <h1 class="max-w-[20ch] font-display text-5xl tracking-tight text-balance">${escapeHtml(page.h1)}</h1>
+      <h1 class="max-w-[30ch] font-display text-5xl tracking-tight text-balance">${escapeHtml(page.h1)}</h1>
       ${lead ? `<p class="mt-4 max-w-[48ch] text-pretty text-lg text-muted-foreground">${escapeHtml(withStop(lead))}</p>` : ""}
     </div>
     ${dropZoneHtml()}
