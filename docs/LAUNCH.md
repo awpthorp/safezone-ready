@@ -7,12 +7,12 @@ This is the operational list. Code in this change ships pages, unique meta, sche
 ## 1. Domain and HTTPS
 
 - [x] Cloudflare Pages project `safezone-ready-web` (Clients account). Staging custom domain is live.
-- [x] Custom domains added on that project: `safezoneready.com` and `www.safezoneready.com` (6 Sep 2026). Status is still **pending** until DNS records exist. Wrangler OAuth cannot write DNS (`zone:read` only).
-- [ ] Apex and `www` DNS orange-cloud to Pages. In the Pages custom-domain screen, use the records Cloudflare shows (usually CNAME `www` -> `safezone-ready-web.pages.dev`, and a flattened CNAME or ALIAS for the apex to the same target).
-- [ ] Confirm `https://www.safezoneready.com/` 301s to `https://safezoneready.com/` (repo `_redirects` plus a zone Redirect Rule if Pages does not apply host rules)
-- [ ] `metasafezone.com` and `www.metasafezone.com` 301 to `https://safezoneready.com/meta` (zone Redirect Rules on the satellite zone only; see `infra/redirects.md`)
-- [ ] `staging.safezoneready.com` CNAME to the staging Pages project; keep it off production
-- [ ] HSTS later: `max-age=31536000; includeSubDomains` on `https://safezoneready.com/*` only after www 301 is proven. Do not preload until then. Do not preload `metasafezone.com`.
+- [x] Custom domains on Pages: `safezoneready.com` and `www.safezoneready.com`.
+- [x] Apex and `www` CNAME (proxied) to `safezone-ready-web.pages.dev`. GSC TXT is on the apex.
+- [ ] Confirm `https://www.safezoneready.com/` 301s to `https://safezoneready.com/` (repo `_redirects`; may only apply once both custom domains show Active)
+- [x] `metasafezone.com` and `www` 301 to `https://safezoneready.com/meta` via Worker `szr-meta-redirect`
+- [x] `staging.safezoneready.com` CNAME to Pages; `noindex`
+- [x] HSTS `max-age=31536000; includeSubDomains` on the mothership. Do not preload yet.
 
 Dashboards: [Cloudflare Registrar](https://dash.cloudflare.com/?to=/:account/registrar), [DNS](https://dash.cloudflare.com/?to=/:account/zones), [Pages custom domains](https://dash.cloudflare.com/?to=/:account/pages).
 

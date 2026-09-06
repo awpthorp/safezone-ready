@@ -1,0 +1,8 @@
+{
+  "name": "@safezone-ready/meta-redirect",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  }
+}

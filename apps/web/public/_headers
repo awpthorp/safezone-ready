@@ -5,6 +5,9 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Cross-Origin-Opener-Policy: same-origin
 
+https://safezoneready.com/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
 https://staging.safezoneready.com/*
   X-Robots-Tag: noindex, nofollow
 

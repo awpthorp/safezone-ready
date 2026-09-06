@@ -1,0 +1,11 @@
+name = "szr-meta-redirect"
+main = "src/index.ts"
+compatibility_date = "2026-09-06"
+
+[[routes]]
+pattern = "metasafezone.com/*"
+zone_name = "metasafezone.com"
+
+[[routes]]
+pattern = "www.metasafezone.com/*"
+zone_name = "metasafezone.com"
