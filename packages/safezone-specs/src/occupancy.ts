@@ -61,17 +61,41 @@ export function estimateRegionOccupancy(
   }
 
   const background = borderMedian(image);
+  const rowWidth = x1 - x0;
+  const rowInk = new Uint32Array(y1 - y0);
   let ink = 0;
   for (let y = y0; y < y1; y += 1) {
+    let row = 0;
     for (let x = x0; x < x1; x += 1) {
       const mag = sobel(image, x, y);
       const luma = lumaAt(image, x, y);
       if (mag > EDGE_THRESHOLD || Math.abs(luma - background) > LUMA_DELTA) {
-        ink += 1;
+        row += 1;
       }
     }
+    rowInk[y - y0] = row;
+    ink += row;
   }
-  return ink / area;
+  const fill = ink / area;
+  const regionHeight = y1 - y0;
+  const stripH = Math.max(4, Math.round(regionHeight * 0.2));
+  const step = Math.max(1, Math.floor(stripH / 3));
+  let peak = fill;
+  for (let origin = 0; origin + stripH <= regionHeight; origin += step) {
+    let strip = 0;
+    for (let i = 0; i < stripH; i += 1) {
+      strip += rowInk[origin + i] ?? 0;
+    }
+    peak = Math.max(peak, strip / (rowWidth * stripH));
+  }
+  return liftOccupancy(Math.max(fill, peak));
+}
+
+function liftOccupancy(density: number): number {
+  if (density <= 0.04) {
+    return density;
+  }
+  return Math.min(1, 0.04 + (density - 0.04) * 2.2);
 }
 
 export function estimateOverlayOccupancy(image: LumaImage, overlay: OverlaySpec): OccupancyMap {

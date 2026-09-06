@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   describePlacementIssue,
   describeReportHint,
+  estimateOverlayOccupancy,
   estimateRegionOccupancy,
+  getOverlay,
   gradeFromScore,
   parsePlatformSearch,
   scoreCreative,
@@ -159,5 +161,27 @@ describe("occupancy heuristic", () => {
     const ink = estimateRegionOccupancy({ data: busy, width, height, channels: 1 }, rect);
     expect(empty).toBeLessThan(0.15);
     expect(ink).toBeGreaterThan(0.5);
+  });
+
+  it("does not mark a 9:16 still Ready when a headline sits in the Reels caption band", () => {
+    const width = 108;
+    const height = 192;
+    const data = new Uint8ClampedArray(width * height).fill(22);
+    const y0 = Math.round(height * 0.82);
+    const y1 = Math.round(height * 0.9);
+    const x0 = Math.round(width * 0.18);
+    const x1 = Math.round(width * 0.82);
+    for (let y = y0; y < y1; y += 1) {
+      for (let x = x0; x < x1; x += 1) {
+        data[y * width + x] = 240;
+      }
+    }
+    const overlay = getOverlay("meta_reels", width, height);
+    const occupancy = estimateOverlayOccupancy({ data, width, height, channels: 1 }, overlay);
+    const scored = scorePlacement(1080, 1920, "meta_reels", occupancy);
+    expect(occupancy.bottom ?? 0).toBeGreaterThan(0.3);
+    expect(scored.score).toBeLessThan(70);
+    expect(scored.grade).toBe("at_risk");
+    expect(describePlacementIssue(scored)).toBe("Text sits under the caption and buttons");
   });
 });

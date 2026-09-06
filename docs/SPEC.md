@@ -522,7 +522,7 @@ On a downscaled canvas (max width 360 px):
 1. Convert to luma.
 2. Sobel magnitude.
 3. A pixel is “ink” if magnitude `> 28` or luma is more than 18 away from the border-median background.
-4. Occupancy = ink pixels / pixels in the region.
+4. Occupancy = max(fill, peak strip). Fill is ink / region pixels. Peak is the busiest ~20% height strip in that region. Values above 0.04 are lifted so a headline in a tall caption band cannot score Ready.
 
 This is a **guardrail**, not OCR. Fine print in a danger band can still score “Ready”. The AI path is what runs text compare.
 
