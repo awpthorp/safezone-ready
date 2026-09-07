@@ -41,7 +41,7 @@
       "aspectTolerance": 0.04,
       "recommendedWidth": 1080,
       "recommendedHeight": 1920,
-      "margins": { "top": 0.14, "bottom": 0.35, "left": 0.06, "right": 0.06 },
+      "margins": { "top": 0.14, "bottom": 0.30, "left": 0.06, "right": 0.06 },
       "rails": [
         {
           "id": "reels_engagement",
@@ -52,7 +52,7 @@
         }
       ],
       "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
-      "source": "Meta Help Centre 980593475366490; practical 14/35/6 on 1080x1920; optional engagement rail."
+      "source": "Meta Help Centre 980593475366490; practical 14/30/6 on 1080x1920; optional engagement rail."
     },
     {
       "id": "meta_feed_1x1",

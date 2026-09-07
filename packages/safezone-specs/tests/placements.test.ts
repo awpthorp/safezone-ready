@@ -29,10 +29,10 @@ describe("placement pack", () => {
     }
   });
 
-  it("uses practical Meta Reels margins of 14/35/6", () => {
+  it("uses practical Meta Reels margins of 14/30/6", () => {
     const reels = getPlacement("meta_reels");
     expect(reels.margins.top).toBeCloseTo(0.14);
-    expect(reels.margins.bottom).toBeCloseTo(0.35);
+    expect(reels.margins.bottom).toBeCloseTo(0.30);
     expect(reels.margins.left).toBeCloseTo(0.06);
     expect(reels.margins.right).toBeCloseTo(0.06);
   });
@@ -42,9 +42,9 @@ describe("placement pack", () => {
     const top = overlay.danger.find((r) => r.id === "top");
     const bottom = overlay.danger.find((r) => r.id === "bottom");
     expect(top?.pixels.height).toBe(269);
-    expect(bottom?.pixels.height).toBe(672);
+    expect(bottom?.pixels.height).toBe(576);
     expect(overlay.safe.pixels.width).toBe(950);
-    expect(overlay.safe.pixels.height).toBe(979);
+    expect(overlay.safe.pixels.height).toBe(1075);
   });
 
   it("makes combined stricter than any single 9:16 edge", () => {

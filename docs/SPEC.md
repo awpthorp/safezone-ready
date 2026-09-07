@@ -548,7 +548,7 @@ Meta also notes that **disclaimer** copy may need the bottom **40%** clear. We e
 | Edge | Fraction | px on 1080×1920 | Why |
 | --- | --- | --- | --- |
 | Top | 0.14 | 269 | Profile row |
-| Bottom | 0.35 | 672 | Likes, comments, share, audio, caption, CTA |
+| Bottom | 0.30 | 576 | Likes, comments, share, audio, caption, CTA |
 | Left | 0.06 | 65 | Edge |
 | Right | 0.06 | 65 | Edge |
 | Rail (optional extra) | x=0.82–1.0, y=0.42–0.78 | ~194×691 | Engagement stack on some Reels surfaces |
