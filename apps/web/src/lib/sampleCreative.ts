@@ -1,70 +1,67 @@
-export function drawSampleCreative(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  const g = ctx.createLinearGradient(0, 0, 0, h);
-  g.addColorStop(0, "#1a1410");
-  g.addColorStop(0.45, "#3b2416");
-  g.addColorStop(1, "#120e0b");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, w, h);
+const SAMPLE_STILL = "/samples/glow-serum.webp";
 
-  ctx.fillStyle = "#d4a017";
-  ctx.beginPath();
-  ctx.arc(w * 0.5, h * 0.42, w * 0.18, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#1a1410";
-  ctx.font = `600 ${Math.round(w * 0.045)}px "DM Sans", sans-serif`;
-  ctx.textAlign = "center";
-  ctx.fillText("GLOW", w * 0.5, h * 0.43);
+let sampleStill: HTMLImageElement | undefined;
+let sampleStillLoading: Promise<HTMLImageElement> | undefined;
 
-  ctx.fillStyle = "#f4efe6";
-  ctx.font = `700 ${Math.round(w * 0.055)}px "DM Sans", sans-serif`;
-  ctx.fillText("Night serum", w * 0.5, h * 0.58);
-
-  ctx.textAlign = "left";
-  ctx.font = `700 ${Math.round(w * 0.042)}px "DM Sans", sans-serif`;
-  ctx.fillText("GLOW", w * 0.06, h * 0.07);
-
-  ctx.textAlign = "center";
-  ctx.fillStyle = "#ffe566";
-  ctx.font = `700 ${Math.round(w * 0.11)}px "DM Sans", sans-serif`;
-  ctx.fillText("50% OFF", w * 0.5, h * 0.86);
-
-  ctx.fillStyle = "#f4efe6";
-  ctx.font = `600 ${Math.round(w * 0.038)}px "DM Sans", sans-serif`;
-  ctx.fillText("Shop now  ·  glow.example", w * 0.5, h * 0.92);
+function sampleStillImage() {
+  if (sampleStill) {
+    return Promise.resolve(sampleStill);
+  }
+  sampleStillLoading ??= loadImage(SAMPLE_STILL).then((image) => {
+    sampleStill = image;
+    return image;
+  });
+  return sampleStillLoading;
 }
 
-export function drawFixedCreative(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  const g = ctx.createLinearGradient(0, 0, 0, h);
-  g.addColorStop(0, "#241810");
-  g.addColorStop(0.5, "#3b2416");
-  g.addColorStop(1, "#1a1410");
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, w, h);
+function coverStill(ctx: CanvasRenderingContext2D, image: HTMLImageElement, w: number, h: number) {
+  const scale = Math.max(w / image.width, h / image.height);
+  const dw = image.width * scale;
+  const dh = image.height * scale;
+  ctx.drawImage(image, (w - dw) / 2, (h - dh) / 2, dw, dh);
+}
 
-  ctx.fillStyle = "#d4a017";
-  ctx.beginPath();
-  ctx.arc(w * 0.5, h * 0.38, w * 0.16, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = "#1a1410";
-  ctx.font = `600 ${Math.round(w * 0.04)}px "DM Sans", sans-serif`;
+function drawWordmark(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+  ctx.shadowColor = "rgba(0,0,0,0.62)";
+  ctx.shadowBlur = Math.round(w * 0.014);
+  ctx.fillStyle = "#f4efe6";
+  ctx.font = `700 ${Math.round(w * 0.042)}px "DM Sans", sans-serif`;
+  ctx.fillText("GLOW", w * 0.08, h * 0.205);
+  ctx.font = `600 ${Math.round(w * 0.03)}px "DM Sans", sans-serif`;
+  ctx.fillText("Night serum", w * 0.08, h * 0.236);
+  ctx.shadowBlur = 0;
+}
+
+function drawOffer(ctx: CanvasRenderingContext2D, w: number, h: number, offerY: number, ctaY: number) {
   ctx.textAlign = "center";
-  ctx.fillText("GLOW", w * 0.5, h * 0.39);
-
-  ctx.fillStyle = "#f4efe6";
-  ctx.font = `700 ${Math.round(w * 0.048)}px "DM Sans", sans-serif`;
-  ctx.fillText("Night serum", w * 0.5, h * 0.52);
-
+  ctx.textBaseline = "alphabetic";
+  ctx.shadowColor = "rgba(0,0,0,0.7)";
+  ctx.shadowBlur = Math.round(w * 0.02);
   ctx.fillStyle = "#ffe566";
-  ctx.font = `700 ${Math.round(w * 0.09)}px "DM Sans", sans-serif`;
-  ctx.fillText("50% OFF", w * 0.5, h * 0.61);
-
+  ctx.font = `700 ${Math.round(w * 0.11)}px "DM Sans", sans-serif`;
+  ctx.fillText("50% OFF", w * 0.5, h * offerY);
   ctx.fillStyle = "#f4efe6";
-  ctx.font = `600 ${Math.round(w * 0.034)}px "DM Sans", sans-serif`;
-  ctx.fillText("Shop now  ·  glow.example", w * 0.5, h * 0.66);
+  ctx.font = `600 ${Math.round(w * 0.038)}px "DM Sans", sans-serif`;
+  ctx.fillText("Shop now  ·  glow.example", w * 0.5, h * ctaY);
+  ctx.shadowBlur = 0;
+}
+
+export async function drawSampleCreative(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  coverStill(ctx, await sampleStillImage(), w, h);
+  drawWordmark(ctx, w, h);
+  drawOffer(ctx, w, h, 0.86, 0.92);
+}
+
+export async function drawFixedCreative(ctx: CanvasRenderingContext2D, w: number, h: number) {
+  coverStill(ctx, await sampleStillImage(), w, h);
+  drawWordmark(ctx, w, h);
+  drawOffer(ctx, w, h, 0.61, 0.66);
 }
 
 export async function canvasToImage(
-  draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void,
+  draw: (ctx: CanvasRenderingContext2D, w: number, h: number) => void | Promise<void>,
   fileName = "sample-glow-serum.png",
 ) {
   const canvas = document.createElement("canvas");
@@ -74,7 +71,7 @@ export async function canvasToImage(
   if (!ctx) {
     throw new Error("Canvas is not available");
   }
-  draw(ctx, canvas.width, canvas.height);
+  await draw(ctx, canvas.width, canvas.height);
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("Could not encode sample"))), "image/png");
   });
