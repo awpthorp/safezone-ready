@@ -85,9 +85,9 @@ export function GradientAvatar({ className = "size-7" }: { className?: string })
 export function TikTokFollowAvatar() {
   return (
     <div className="relative">
-      <span className="block size-5 rounded-full bg-linear-to-br from-cyan-300 to-rose-500 ring-2 ring-white" />
-      <span className="absolute -bottom-0.5 left-1/2 flex size-3 -translate-x-1/2 items-center justify-center rounded-full bg-rose-500">
-        <Plus className="size-2 text-white" />
+      <span className="block size-7 rounded-full bg-linear-to-br from-cyan-300 to-rose-500 ring-2 ring-white" />
+      <span className="absolute -bottom-0.5 left-1/2 flex size-3.5 -translate-x-1/2 items-center justify-center rounded-full bg-rose-500">
+        <Plus className="size-2.5 text-white" />
       </span>
     </div>
   );
@@ -103,8 +103,8 @@ export function AudioCover() {
 
 export function SpinningDisc() {
   return (
-    <span className="flex size-5 items-center justify-center rounded-full bg-zinc-900 ring-2 ring-white motion-safe:[animation:spin_4s_linear_infinite]">
-      <Music2 className="size-2.5 shrink-0" />
+    <span className="flex size-7 items-center justify-center rounded-full bg-zinc-900 ring-2 ring-white motion-safe:[animation:spin_4s_linear_infinite]">
+      <Music2 className="size-3 shrink-0" />
     </span>
   );
 }

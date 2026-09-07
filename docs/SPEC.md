@@ -598,7 +598,7 @@ MVP default (“standard caption”, measured from the public “Standard Versio
 | Bottom | 0.344 | 660 |
 | Left | 0.111 | 120 |
 | Right | 0.111 | 120 |
-| Rail | x=0.722–0.889, y=0.438–0.656 | 180×420 at ~(780, 840) |
+| Rail | x=0.86–1.0, y=0.42–0.656 | 151×453 at ~(929, 806). Stack sits on the right edge, same pattern as Reels and Shorts. |
 
 Copy in UI: “TikTok’s official overlays change with caption length. This is the standard In-Feed guardrail.”
 

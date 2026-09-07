@@ -274,12 +274,12 @@ function TikTokChrome({ placement }: { placement: PlacementSpec }) {
         </div>
       </div>
 
-      <div className="absolute top-(--rail-y) left-(--rail-x) flex h-auto w-(--rail-w) flex-col items-center gap-1.5">
+      <div className="absolute top-(--rail-y) right-0 flex h-(--rail-h) w-(--rail-w) flex-col items-center justify-between py-0.5">
         <TikTokFollowAvatar />
-        <RailIcon compact icon={<Heart className="size-4 shrink-0 fill-white" />} label="128.4k" />
-        <RailIcon compact icon={<MessageCircle className="size-4 shrink-0" />} label="2116" />
-        <RailIcon compact icon={<Bookmark className="size-4 shrink-0" />} label="940" />
-        <RailIcon compact icon={<Share2 className="size-4 shrink-0" />} label="Share" />
+        <RailIcon icon={<Heart className="size-5 shrink-0 fill-white" />} label="128.4k" />
+        <RailIcon icon={<MessageCircle className="size-5 shrink-0" />} label="2116" />
+        <RailIcon icon={<Bookmark className="size-5 shrink-0" />} label="940" />
+        <RailIcon icon={<Share2 className="size-5 shrink-0" />} label="Share" />
         <SpinningDisc />
       </div>
 

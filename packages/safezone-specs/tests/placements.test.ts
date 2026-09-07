@@ -29,6 +29,14 @@ describe("placement pack", () => {
     }
   });
 
+  it("keeps the TikTok action stack on the right edge", () => {
+    const tiktok = getPlacement("tiktok_infeed");
+    const rail = tiktok.rails[0];
+    expect(rail).toBeDefined();
+    expect(rail?.x).toBeGreaterThanOrEqual(0.85);
+    expect((rail?.x ?? 0) + (rail?.width ?? 0)).toBeCloseTo(1, 5);
+  });
+
   it("uses practical Meta Reels margins of 14/30/6", () => {
     const reels = getPlacement("meta_reels");
     expect(reels.margins.top).toBeCloseTo(0.14);

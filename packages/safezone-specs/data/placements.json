@@ -1,5 +1,5 @@
 {
-  "specVersion": "2026-09-04",
+  "specVersion": "2026-09-07",
   "disclaimer": "practical-guardrail",
   "notes": "Percentages are practical guardrails derived from public platform guidance and measured official overlay templates. Not affiliated with Meta, Google, or TikTok. Re-measure before launch.",
   "placements": [
@@ -109,14 +109,14 @@
       "rails": [
         {
           "id": "tiktok_engagement",
-          "x": 0.722,
-          "y": 0.438,
-          "width": 0.167,
-          "height": 0.218
+          "x": 0.86,
+          "y": 0.42,
+          "width": 0.14,
+          "height": 0.236
         }
       ],
       "weights": { "top": 0.25, "bottom": 0.4, "left": 0.1, "right": 0.1, "rail": 0.35 },
-      "source": "TikTok Ads Help Centre In-Feed ZIP (standard caption family). Official zone shrinks with caption length."
+      "source": "TikTok Ads Help Centre In-Feed ZIP (standard caption family). Action stack sits on the right edge, same pattern as Reels and Shorts. Official zone shrinks with caption length."
     },
     {
       "id": "combined",
@@ -131,9 +131,9 @@
       "rails": [
         {
           "id": "union_rail",
-          "x": 0.722,
+          "x": 0.82,
           "y": 0.42,
-          "width": 0.278,
+          "width": 0.18,
           "height": 0.36
         }
       ],
