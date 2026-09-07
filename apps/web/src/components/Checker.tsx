@@ -249,7 +249,7 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
               id="creative-file"
               name="creative"
               type="file"
-              accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime,video/x-m4v,.mp4,.webm,.mov,.m4v"
+              accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime,video/x-m4v,video/ogg,video/3gpp,.mp4,.m4v,.mov,.webm,.ogv,.ogg,.3gp,.3gpp"
               className="sr-only"
               onChange={(e) => {
                 void onFile(e.target.files?.[0]);
@@ -268,7 +268,7 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
               </Button>
             </div>
             <p className="text-base/7 text-muted-foreground sm:text-sm/6">
-              {busy ? busyText : "PNG, JPEG, WebP, MP4 or WebM."}
+              {busy ? busyText : "PNG, JPEG, WebP, MP4, WebM, MOV or M4V."}
             </p>
           </div>
         ) : (

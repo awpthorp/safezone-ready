@@ -66,7 +66,7 @@ export const HOME_FAQ: FaqItem[] = [
   {
     question: "Can I check a video?",
     answer:
-      "Yes. Drop an MP4 or WebM. Scoring samples frames in your browser. AI edits that shift the layout are stills only.",
+      "Yes. Drop an MP4, WebM, MOV or M4V. Scoring samples frames in your browser. AI edits that shift the layout are stills only.",
   },
 ];
 
@@ -83,7 +83,7 @@ export const PAGES: Record<PageId, PageDef> = {
     ogTitle: "Check if Instagram, TikTok or YouTube will cover your ad",
     subline: "Drop a still or a clip. See the cover before you spend.",
     paragraphs: [
-      "Safe Zone Ready is a free checker for ad stills and video. Drop a PNG, JPEG, WebP, MP4 or WebM and see where Instagram Reels, Stories, Feed, YouTube Shorts and TikTok place captions, profile rows and buttons on your offer. The file stays in your browser. Nothing uploads for a score.",
+      "Safe Zone Ready is a free checker for ad stills and video. Drop a PNG, JPEG, WebP, MP4, WebM, MOV or M4V and see where Instagram Reels, Stories, Feed, YouTube Shorts and TikTok place captions, profile rows and buttons on your offer. The file stays in your browser. Nothing uploads for a score.",
       "Media buyers use it as a last look before Ads Manager. Scores are practical overlays from public platform guidance and measured templates. They are not a certification from Meta, Google or TikTok. Always preview in the official ads manager before you spend.",
       "If text sits in a cover band, you can ask for an AI edit that moves the offer without deleting the price, logo or button. That path needs a Google sign-in. Two complimentary edits come with a new account.",
     ],

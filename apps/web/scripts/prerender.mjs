@@ -181,7 +181,7 @@ function dropZoneHtml() {
             <p class="text-lg font-medium">Drop the still or clip</p>
             <p class="mt-2 max-w-[40ch] text-pretty text-base/7 text-muted-foreground sm:text-sm/6">See Instagram, TikTok and YouTube chrome on the offer. The file stays in this tab.</p>
           </div>
-          <p class="text-base/7 text-muted-foreground sm:text-sm/6">PNG, JPEG, WebP, MP4 or WebM.</p>
+          <p class="text-base/7 text-muted-foreground sm:text-sm/6">PNG, JPEG, WebP, MP4, WebM, MOV or M4V.</p>
         </div>
       </div>
       <aside class="flex flex-col gap-4">

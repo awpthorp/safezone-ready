@@ -16,9 +16,20 @@ const MAX_VIDEO_DURATION_S = 180;
 const FRAME_FRACTIONS = [0, 0.25, 0.5, 0.75, 0.95];
 
 const IMAGE_TYPES = new Set(["image/png", "image/jpeg", "image/webp"]);
-const VIDEO_TYPES = new Set(["video/mp4", "video/webm", "video/quicktime", "video/x-m4v"]);
+const VIDEO_TYPES = new Set([
+  "video/mp4",
+  "video/webm",
+  "video/quicktime",
+  "video/x-m4v",
+  "video/mpeg",
+  "video/ogg",
+  "video/ogv",
+  "video/3gpp",
+  "video/3gpp2",
+  "application/mp4",
+]);
 const IMAGE_EXT = new Set([".png", ".jpg", ".jpeg", ".webp"]);
-const VIDEO_EXT = new Set([".mp4", ".webm", ".mov", ".m4v"]);
+const VIDEO_EXT = new Set([".mp4", ".webm", ".mov", ".m4v", ".mpeg", ".mpg", ".ogv", ".ogg", ".3gp", ".3gpp"]);
 
 export interface AnalysedCreative {
   report: ScoreReport;
@@ -34,14 +45,20 @@ export function isVideoFile(file: File): boolean {
   if (VIDEO_TYPES.has(file.type)) {
     return true;
   }
-  return !file.type && VIDEO_EXT.has(fileExtension(file.name));
+  if (file.type.startsWith("image/")) {
+    return false;
+  }
+  return VIDEO_EXT.has(fileExtension(file.name));
 }
 
 export function isImageFile(file: File): boolean {
   if (IMAGE_TYPES.has(file.type)) {
     return true;
   }
-  return !file.type && IMAGE_EXT.has(fileExtension(file.name));
+  if (file.type.startsWith("video/")) {
+    return false;
+  }
+  return IMAGE_EXT.has(fileExtension(file.name));
 }
 
 export function analyseImage(
@@ -129,7 +146,7 @@ export function validateFile(file: File): string | null {
   const image = isImageFile(file);
   const video = isVideoFile(file);
   if (!image && !video) {
-    return "Use a PNG, JPEG, WebP, MP4 or WebM.";
+    return "Use a PNG, JPEG, WebP, MP4, WebM, MOV or M4V.";
   }
   if (video && file.size > MAX_VIDEO_BYTES) {
     return "That file is over 40 MB. Compress it and try again.";
