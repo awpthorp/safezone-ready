@@ -1,4 +1,4 @@
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { legalDocFor } from "../src/content/legal.ts";
@@ -354,6 +354,85 @@ function outputPath(pagePath) {
   return join(distDir, pagePath.slice(1), "index.html");
 }
 
+function outputMarkdownPath(pagePath) {
+  if (pagePath === "/") {
+    return join(distDir, "index.md");
+  }
+  return join(distDir, pagePath.slice(1), "index.md");
+}
+
+function yamlQuote(value) {
+  return JSON.stringify(value);
+}
+
+function pageMarkdown(page) {
+  const url = page.path === "/" ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${page.path}`;
+  const lines = [
+    "---",
+    `title: ${yamlQuote(page.ogTitle || page.h1)}`,
+    `description: ${yamlQuote(page.description)}`,
+    `image: ${yamlQuote(OG_IMAGE)}`,
+    "---",
+    "",
+    `# ${page.h1}`,
+    "",
+  ];
+
+  if (page.kind === "legal") {
+    const doc = legalDocFor(page.id);
+    lines.push(`Last updated ${doc.updated}.`, "");
+    for (const section of doc.sections) {
+      lines.push(`## ${section.heading}`, "");
+      for (const paragraph of section.paragraphs) {
+        lines.push(paragraph, "");
+      }
+    }
+  } else {
+    const lead = page.kind === "home" ? page.subline : null;
+    if (lead) {
+      lines.push(withStop(lead), "");
+    }
+    for (const paragraph of page.paragraphs) {
+      lines.push(paragraph, "");
+    }
+    if (page.covers?.length) {
+      lines.push("## What this overlay covers", "");
+      for (const item of page.covers) {
+        lines.push(`- ${item}`);
+      }
+      lines.push("");
+    }
+    if (page.kind === "home") {
+      lines.push("## Why the safe zone matters", "");
+      lines.push(
+        "Instagram, TikTok and YouTube draw likes, captions, profile rows and shop buttons on top of the file. If the offer sits in that cover, people still see the ad. They do not see the deal.",
+        "",
+      );
+      lines.push("- **Wasted spend**: You pay for the impression. If the price, the logo or the shop button sits under likes and captions, the message is unreadable.");
+      lines.push("- **Brand risk**: The mark or the claim is what must stay visible. A covered logo is not a brand appearance.");
+      lines.push("- **Last look**: Catch it before Ads Manager, not after the budget is live.", "");
+      lines.push("## A bad still and a good still", "");
+      lines.push("Same serum, same 9:16 frame. The only change is where the 50% off sits.", "");
+      lines.push(
+        "- **Bad**: The 50% off sits in the caption band. Instagram draws the caption, shop button and tab bar on top of it. You pay for an impression of a price nobody can read.",
+      );
+      lines.push(
+        "- **Good**: The 50% off sits in the hole. Likes, caption and shop still appear. The price stays readable.",
+        "",
+      );
+    }
+    if (page.faq?.length) {
+      lines.push("## Questions", "");
+      for (const item of page.faq) {
+        lines.push(`### ${item.question}`, "", item.answer, "");
+      }
+    }
+  }
+
+  lines.push(`Canonical: ${url}`, "");
+  return `${lines.join("\n")}\n`;
+}
+
 const template = readFileSync(templatePath, "utf8");
 if (!template.includes('<div id="root"></div>') && !template.includes('<div id="root">')) {
   throw new Error("prerender: dist/index.html is missing #root");
@@ -369,6 +448,9 @@ for (const page of INDEXABLE_PAGES) {
   const dest = outputPath(page.path);
   mkdirSync(dirname(dest), { recursive: true });
   writeFileSync(dest, html);
+  const markdownDest = outputMarkdownPath(page.path);
+  mkdirSync(dirname(markdownDest), { recursive: true });
+  writeFileSync(markdownDest, pageMarkdown(page));
   if (!html.includes(`<title>${page.title}</title>`)) {
     throw new Error(`prerender: missing unique title in ${dest}: ${page.title}`);
   }
@@ -393,4 +475,5 @@ writeFileSync(join(distDir, "404.html"), notFoundHtmlPage);
 if (!notFoundHtmlPage.includes("noindex")) {
   throw new Error("prerender: 404.html missing noindex");
 }
-console.log(`prerender: wrote ${written.length} pages + 404.html`);
+copyFileSync(join(rootDir, "markdown-worker.js"), join(distDir, "_worker.js"));
+console.log(`prerender: wrote ${written.length} pages + markdown + 404.html + _worker.js`);
