@@ -160,6 +160,15 @@ function footerHtml() {
           <a class="font-normal" href="/terms">Terms</a>
           <span>Not affiliated with Meta, Google or TikTok.</span>
         </nav>
+        <a href="https://www.launchdub.ai" title="Featured on LaunchDubai" data-launchdub-badge>
+          <img
+            src="https://www.launchdub.ai/badge/launchdubai-badge-dark.svg"
+            alt="Featured on LaunchDubai"
+            width="216"
+            height="64"
+            style="width: 162px; height: auto"
+          />
+        </a>
       </div>
     </footer>`;
 }
