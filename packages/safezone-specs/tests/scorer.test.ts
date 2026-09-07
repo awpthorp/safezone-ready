@@ -68,6 +68,27 @@ describe("scoreCreative", () => {
     expect(report.overall).toBeLessThan(70);
   });
 
+  it("does not let Feed shape drag down a 9:16 still", () => {
+    const report = scoreCreative({
+      width: 1080,
+      height: 1920,
+      occupancy: {
+        combined: { top: 0, bottom: 0, left: 0, right: 0, rail: 0 },
+        meta_reels: { top: 0, bottom: 0, left: 0, right: 0, rail: 0 },
+        meta_stories: { top: 0, bottom: 0, left: 0, right: 0, rail: 0 },
+        meta_feed_4x5: { top: 0, bottom: 0, left: 0, right: 0, rail: 0 },
+        meta_feed_1x1: { top: 0, bottom: 0, left: 0, right: 0, rail: 0 },
+        youtube_shorts: { top: 0, bottom: 0, left: 0, right: 0, rail: 0 },
+        tiktok_infeed: { top: 0, bottom: 0, left: 0, right: 0, rail: 0 },
+      },
+    });
+    const feed = report.placements.find((p) => p.placementId === "meta_feed_1x1");
+    expect(feed?.aspectFit).toBe(false);
+    expect(feed?.score).toBeLessThan(85);
+    expect(report.overall).toBe(100);
+    expect(report.grade).toBe("ready");
+  });
+
   it("uses the minimum placement score as overall", () => {
     const report = scoreCreative({
       width: 1080,

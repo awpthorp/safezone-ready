@@ -54,8 +54,8 @@ export function describePlacementIssue(score: PlacementScore): string {
 
 /** One line under the still. Names the app that will hide the offer. */
 export function describeReportHint(report: ScoreReport): string {
-  const named = report.placements.filter((p) => p.placementId !== "combined");
-  const pool = named.length ? named : report.placements;
+  const named = report.placements.filter((p) => p.placementId !== "combined" && p.aspectFit);
+  const pool = named.length ? named : report.placements.filter((p) => p.placementId !== "combined");
   const worst = [...pool].sort((a, b) => a.score - b.score)[0];
   if (!worst || worst.score >= 85) {
     return "Looks clear on this still. Preview it in the ads manager before you spend.";

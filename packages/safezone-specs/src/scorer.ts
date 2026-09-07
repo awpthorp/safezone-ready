@@ -91,7 +91,9 @@ export function scoreCreative(input: ScoreCreativeInput): ScoreReport {
     scorePlacement(input.width, input.height, id, input.occupancy?.[id]),
   );
 
-  const overall = placements.length ? Math.min(...placements.map((p) => p.score)) : 0;
+  const fitting = placements.filter((placement) => placement.aspectFit);
+  const pool = fitting.length ? fitting : placements;
+  const overall = pool.length ? Math.min(...pool.map((p) => p.score)) : 0;
 
   return {
     specVersion: SPEC_VERSION,
