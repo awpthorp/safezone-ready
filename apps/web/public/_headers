@@ -4,6 +4,7 @@
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Cross-Origin-Opener-Policy: same-origin
+  Link: </llms.txt>; rel="describedby"; type="text/plain"
 
 https://safezoneready.com/*
   Strict-Transport-Security: max-age=31536000; includeSubDomains

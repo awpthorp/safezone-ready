@@ -8,13 +8,15 @@ Optional AI edits (when live) need a Google sign-in, store the image for at most
 
 This file is a courtesy for language models. It is not a ranking signal on Google.
 
+Agents that send `Accept: text/markdown` receive a markdown version of each page. The same files also live at `/index.md` on each path.
+
 ## Pages
 
-- [Combined overlay checker](https://safezoneready.com/): Combined overlay for Instagram, TikTok and YouTube Shorts.
-- [Instagram Reels, Stories and Feed](https://safezoneready.com/meta): Instagram Reels, Stories and Feed 4:5 safe zone checker. Deep links from metasafezone.com land here.
-- [YouTube Shorts checker](https://safezoneready.com/youtube-shorts): YouTube Shorts title, channel, CTA card and right-hand rail.
-- [TikTok in-feed checker](https://safezoneready.com/tiktok): Standard TikTok in-feed guardrail. Official overlays change with caption length.
-- [Privacy](https://safezoneready.com/privacy): How local checks, AI edits, cookies and UK GDPR rights work.
-- [Terms](https://safezoneready.com/terms): Terms of use, credits, affiliation and acceptable use.
+- [Combined overlay checker](https://safezoneready.com/): Combined overlay for Instagram, TikTok and YouTube Shorts. Markdown: [index.md](https://safezoneready.com/index.md).
+- [Instagram Reels, Stories and Feed](https://safezoneready.com/meta): Instagram Reels, Stories and Feed 4:5 safe zone checker. Deep links from metasafezone.com land here. Markdown: [index.md](https://safezoneready.com/meta/index.md).
+- [YouTube Shorts checker](https://safezoneready.com/youtube-shorts): YouTube Shorts title, channel, CTA card and right-hand rail. Markdown: [index.md](https://safezoneready.com/youtube-shorts/index.md).
+- [TikTok in-feed checker](https://safezoneready.com/tiktok): Standard TikTok in-feed guardrail. Official overlays change with caption length. Markdown: [index.md](https://safezoneready.com/tiktok/index.md).
+- [Privacy](https://safezoneready.com/privacy): How local checks, AI edits, cookies and UK GDPR rights work. Markdown: [index.md](https://safezoneready.com/privacy/index.md).
+- [Terms](https://safezoneready.com/terms): Terms of use, credits, affiliation and acceptable use. Markdown: [index.md](https://safezoneready.com/terms/index.md).
 
 Canonical host: [https://safezoneready.com](https://safezoneready.com)
