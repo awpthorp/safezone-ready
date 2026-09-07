@@ -205,4 +205,45 @@ describe("occupancy heuristic", () => {
     expect(scored.grade).toBe("at_risk");
     expect(describePlacementIssue(scored)).toBe("Text sits under the caption and buttons");
   });
+
+  it("does not treat a smooth full-bleed photo as cover on Reels", () => {
+    const width = 108;
+    const height = 192;
+    const data = new Uint8ClampedArray(width * height);
+    for (let y = 0; y < height; y += 1) {
+      const tone = Math.round(70 + (y / height) * 80);
+      data.fill(tone, y * width, (y + 1) * width);
+    }
+    const overlay = getOverlay("meta_reels", width, height);
+    const occupancy = estimateOverlayOccupancy({ data, width, height, channels: 1 }, overlay);
+    const scored = scorePlacement(1080, 1920, "meta_reels", occupancy);
+    expect(occupancy.bottom ?? 0).toBeLessThan(0.2);
+    expect(scored.score).toBeGreaterThanOrEqual(85);
+    expect(scored.grade).toBe("ready");
+  });
+
+  it("still flags a caption bar on that same photo", () => {
+    const width = 108;
+    const height = 192;
+    const data = new Uint8ClampedArray(width * height);
+    for (let y = 0; y < height; y += 1) {
+      const tone = Math.round(70 + (y / height) * 80);
+      data.fill(tone, y * width, (y + 1) * width);
+    }
+    const y0 = Math.round(height * 0.82);
+    const y1 = Math.round(height * 0.9);
+    const x0 = Math.round(width * 0.18);
+    const x1 = Math.round(width * 0.82);
+    for (let y = y0; y < y1; y += 1) {
+      for (let x = x0; x < x1; x += 1) {
+        data[y * width + x] = 240;
+      }
+    }
+    const overlay = getOverlay("meta_reels", width, height);
+    const occupancy = estimateOverlayOccupancy({ data, width, height, channels: 1 }, overlay);
+    const scored = scorePlacement(1080, 1920, "meta_reels", occupancy);
+    expect(occupancy.bottom ?? 0).toBeGreaterThan(0.3);
+    expect(scored.score).toBeLessThan(70);
+    expect(scored.grade).toBe("at_risk");
+  });
 });

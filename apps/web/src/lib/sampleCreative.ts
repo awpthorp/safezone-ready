@@ -57,7 +57,7 @@ export async function drawSampleCreative(ctx: CanvasRenderingContext2D, w: numbe
 export async function drawFixedCreative(ctx: CanvasRenderingContext2D, w: number, h: number) {
   coverStill(ctx, await sampleStillImage(), w, h);
   drawWordmark(ctx, w, h);
-  drawOffer(ctx, w, h, 0.61, 0.66);
+  drawOffer(ctx, w, h, 0.6, 0.64);
 }
 
 export async function canvasToImage(
