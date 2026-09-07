@@ -1,5 +1,5 @@
 export const VIDEO_DECODE_ERROR =
-  "We could not play that video. Try an MP4 or WebM this browser can decode.";
+  "We could not play that video. Try an MP4, WebM, MOV or M4V this browser can decode.";
 
 const SEEK_TIMEOUT_MS = 2000;
 const TIME_EPSILON = 0.0005;

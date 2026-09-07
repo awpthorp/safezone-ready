@@ -85,7 +85,7 @@ Cloudflare-native is the correct default. Credits beat seats for a single-player
 
 | Capability | Notes |
 | --- | --- |
-| Deterministic overlay checker | Client-side object URL + canvas. PNG / JPEG / WebP stills, plus a local MP4 / WebM / MOV clip check (up to 5 sampled frames). |
+| Deterministic overlay checker | Client-side object URL + canvas. PNG / JPEG / WebP stills, plus a local MP4 / WebM / MOV / M4V clip check (up to 5 sampled frames). |
 | Platforms | Meta Stories, Meta Reels, Meta Feed 1:1, Meta Feed 4:5, YouTube Shorts, TikTok In-Feed, plus a **strictest combined** union. |
 | Scores | 0–100 per placement plus overall, with Ready / Caution / At risk. |
 | Occupancy heuristic | Client estimates “ink” (edge / contrast energy) in danger rects. Not OCR. |
@@ -139,7 +139,7 @@ All journeys below are normative for UX copy and API gates.
 ### 3.1 Anon: local check (no account)
 
 1. Visitor lands on `https://safezoneready.com/` (or is 301'd from `metasafezone.com` to `/?platform=meta`).
-2. They drop or pick a PNG / JPEG / WebP still or an MP4 / WebM clip. The file stays in browser memory (object URL → image or muted video element → canvas). **No upload.**
+2. They drop or pick a PNG / JPEG / WebP still or an MP4 / WebM / MOV / M4V clip. The file stays in browser memory (object URL → image or muted video element → canvas). **No upload.**
 3. Default view: **strictest combined** overlay, unless `?platform=meta` (Meta Reels selected), `youtube`, or `tiktok`. Per-platform score cards stay visible.
 4. They toggle Meta Stories, Reels, Feed 1:1, Feed 4:5, YouTube Shorts, TikTok.
 5. Scores update instantly from `@safezone-ready/safezone-specs`.

@@ -4,7 +4,7 @@ Read this before you edit anything. Canonical product spec is `docs/SPEC.md`. Th
 
 ## What this is
 
-A freemium check for ad stills and video. Drop a PNG, JPEG, WebP, MP4 or WebM. See where Instagram, TikTok and YouTube will cover the offer. Optionally pay to move the offer on a still so captions and buttons do not sit on it. AI edits are stills only.
+A freemium check for ad stills and video. Drop a PNG, JPEG, WebP, MP4, WebM, MOV or M4V. See where Instagram, TikTok and YouTube will cover the offer. Optionally pay to move the offer on a still so captions and buttons do not sit on it. AI edits are stills only.
 
 Working name in code: Safe Zone Ready / `safezone-ready`.  
 Product site: https://safezoneready.com  
@@ -21,7 +21,7 @@ A media buyer about to spend. They do not want “ink in chrome 70”, Gemini, S
 ## Hard rules
 
 - British English in all user-facing copy. No em dashes.
-- Local video check for MVP (MP4 / WebM in the tab). No AI video edit, CapCut timelines, or worker ingest of video. No teams, Figma, or Ads Manager push.
+- Local video check for MVP (MP4 / WebM / MOV / M4V in the tab). No AI video edit, CapCut timelines, or worker ingest of video. No teams, Figma, or Ads Manager push.
 - Free check is local (object URL in the tab). Nothing uploads for a score.
 - Auth (Google) before the first AI fix. Two free fixes per account, then Stripe packs (£9 / 20, £29 / 80).
 - Scores are practical overlays, not platform certification.
