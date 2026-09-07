@@ -28,6 +28,11 @@ export interface ApiEnv {
   FIX_QUEUE: Queue;
 }
 
+export interface ApiVariables {
+  userId: string;
+  sessionToken: string;
+}
+
 export function isLocal(env: ApiEnv): boolean {
   return env.ENVIRONMENT === "local";
 }
