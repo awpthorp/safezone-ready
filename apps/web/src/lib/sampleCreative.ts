@@ -1,5 +1,3 @@
-import { getPlacement } from "@safezone-ready/safezone-specs";
-
 const SAMPLE_STILL = "/samples/glow-serum.webp";
 
 let sampleStill: HTMLImageElement | undefined;
@@ -23,20 +21,6 @@ function coverStill(ctx: CanvasRenderingContext2D, image: HTMLImageElement, w: n
   ctx.drawImage(image, (w - dw) / 2, (h - dh) / 2, dw, dh);
 }
 
-function drawStillInCombinedHole(ctx: CanvasRenderingContext2D, image: HTMLImageElement, w: number, h: number) {
-  const { top, bottom, left, right } = getPlacement("combined").margins;
-  ctx.fillStyle = "#120e0b";
-  ctx.fillRect(0, 0, w, h);
-  const holeW = w * (1 - left - right);
-  const holeH = h * (1 - top - bottom);
-  const holeX = w * left;
-  const holeY = h * top;
-  const scale = Math.max(holeW / image.width, holeH / image.height);
-  const dw = image.width * scale;
-  const dh = image.height * scale;
-  ctx.drawImage(image, holeX + (holeW - dw) / 2, holeY + (holeH - dh) / 2, dw, dh);
-}
-
 function drawWordmark(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
@@ -44,9 +28,9 @@ function drawWordmark(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.shadowBlur = Math.round(w * 0.014);
   ctx.fillStyle = "#f4efe6";
   ctx.font = `700 ${Math.round(w * 0.042)}px "DM Sans", sans-serif`;
-  ctx.fillText("GLOW", w * 0.14, h * 0.205);
+  ctx.fillText("GLOW", w * 0.08, h * 0.205);
   ctx.font = `600 ${Math.round(w * 0.03)}px "DM Sans", sans-serif`;
-  ctx.fillText("Night serum", w * 0.14, h * 0.236);
+  ctx.fillText("Night serum", w * 0.08, h * 0.236);
   ctx.shadowBlur = 0;
 }
 
@@ -71,9 +55,9 @@ export async function drawSampleCreative(ctx: CanvasRenderingContext2D, w: numbe
 }
 
 export async function drawFixedCreative(ctx: CanvasRenderingContext2D, w: number, h: number) {
-  drawStillInCombinedHole(ctx, await sampleStillImage(), w, h);
+  coverStill(ctx, await sampleStillImage(), w, h);
   drawWordmark(ctx, w, h);
-  drawOffer(ctx, w, h, 0.5, 0.56);
+  drawOffer(ctx, w, h, 0.61, 0.66);
 }
 
 export async function canvasToImage(

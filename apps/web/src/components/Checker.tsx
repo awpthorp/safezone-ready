@@ -150,7 +150,7 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
           dropLoaded(creativeRef.current);
           dropLoaded(fixedRef.current);
           setCreative({ kind: "image", image: sample.image, url: sample.url, fileName: sample.fileName, report });
-          setActiveId(resolvePlacement(defaultPlacement));
+          setActiveId("meta_reels");
         } catch (err) {
           revokeIfBlob(sample.url);
           throw err;
@@ -162,7 +162,7 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
         setBusy(false);
       }
     },
-    [defaultPlacement, dropLoaded],
+    [dropLoaded],
   );
 
   const startFix = useCallback(async () => {
