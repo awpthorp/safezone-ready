@@ -1,6 +1,6 @@
 # Safe Zone Ready
 
-Safe Zone Ready is a free checker for ad stills. Drop a PNG, JPEG or WebP and see where Instagram Reels, Stories, Feed, YouTube Shorts and TikTok place captions, profile rows and buttons on the offer.
+> Safe Zone Ready is a free checker for ad stills. Drop a PNG, JPEG, WebP or a short clip and see where Instagram Reels, Stories, Feed, YouTube Shorts and TikTok place captions, profile rows and buttons on the offer.
 
 Local checks do not upload. Scoring runs in the browser. Overlays are approximate guardrails from public platform guidance and measured templates. They are not a certification from Meta, Google or TikTok.
 
@@ -10,11 +10,11 @@ This file is a courtesy for language models. It is not a ranking signal on Googl
 
 ## Pages
 
-- / : Combined overlay checker for Instagram, TikTok and YouTube Shorts.
-- /meta : Instagram Reels, Stories and Feed 4:5 safe zone checker. Deep links from metasafezone.com land here.
-- /youtube-shorts : YouTube Shorts title, channel, CTA card and right-hand rail.
-- /tiktok : Standard TikTok in-feed guardrail. Official overlays change with caption length.
-- /privacy : How local checks, AI edits, cookies and UK GDPR rights work.
-- /terms : Terms of use, credits, affiliation and acceptable use.
+- [Combined overlay checker](https://safezoneready.com/): Combined overlay for Instagram, TikTok and YouTube Shorts.
+- [Instagram Reels, Stories and Feed](https://safezoneready.com/meta): Instagram Reels, Stories and Feed 4:5 safe zone checker. Deep links from metasafezone.com land here.
+- [YouTube Shorts checker](https://safezoneready.com/youtube-shorts): YouTube Shorts title, channel, CTA card and right-hand rail.
+- [TikTok in-feed checker](https://safezoneready.com/tiktok): Standard TikTok in-feed guardrail. Official overlays change with caption length.
+- [Privacy](https://safezoneready.com/privacy): How local checks, AI edits, cookies and UK GDPR rights work.
+- [Terms](https://safezoneready.com/terms): Terms of use, credits, affiliation and acceptable use.
 
-Canonical host: https://safezoneready.com
+Canonical host: [https://safezoneready.com](https://safezoneready.com)

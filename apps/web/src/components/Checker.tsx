@@ -9,7 +9,7 @@ import { FixPanel, type FixPhase } from "@/components/FixPanel";
 import { PreviewStage } from "@/components/preview/PreviewStage";
 import { ScoreRail } from "@/components/ScoreRail";
 import { Alert, AlertError } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   analyseImage,
   analyseVideo,
@@ -26,6 +26,7 @@ import {
   drawSampleCreative,
   loadImage,
 } from "@/lib/sampleCreative";
+import { cn } from "@/lib/utils";
 
 type LoadedCreative = {
   url: string;
@@ -59,7 +60,6 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
   const [phase, setPhase] = useState<FixPhase>("idle");
   const [credits, setCredits] = useState(2);
   const [dragOver, setDragOver] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const busyRef = useRef(false);
   const creativeRef = useRef<LoadedCreative | null>(null);
   const fixedRef = useRef<LoadedCreative | null>(null);
@@ -245,21 +245,28 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
               </p>
             </div>
             <input
-              ref={fileInputRef}
               id="creative-file"
               name="creative"
               type="file"
               accept="image/png,image/jpeg,image/webp,video/mp4,video/webm,video/quicktime,video/x-m4v,video/ogg,video/3gpp,.mp4,.m4v,.mov,.webm,.ogv,.ogg,.3gp,.3gpp"
               className="sr-only"
+              disabled={busy}
               onChange={(e) => {
                 void onFile(e.target.files?.[0]);
                 e.target.value = "";
               }}
             />
             <div className="flex flex-wrap justify-center gap-2">
-              <Button disabled={busy} onClick={() => fileInputRef.current?.click()}>
+              <label
+                htmlFor="creative-file"
+                className={cn(buttonVariants(), busy && "pointer-events-none opacity-50")}
+              >
                 Choose a file
-              </Button>
+                <span
+                  className="pointer-fine:hidden absolute top-1/2 left-1/2 size-[max(100%,3rem)] -translate-1/2"
+                  aria-hidden="true"
+                />
+              </label>
               <Button variant="outline" disabled={busy} onClick={() => void loadSample("bad")}>
                 Try a bad example
               </Button>
