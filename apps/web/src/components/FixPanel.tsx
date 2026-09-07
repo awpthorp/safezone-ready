@@ -1,8 +1,10 @@
 import type { ScoreReport } from "@safezone-ready/safezone-specs";
 import { Download } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import type { PackSku } from "@/lib/fixClient";
 import { posterlyDownloadLink } from "@/lib/utils";
 
 export type FixPhase = "idle" | "auth" | "running" | "done" | "paywall";
@@ -13,9 +15,12 @@ interface FixPanelProps {
   kind?: "image" | "video";
   before?: ScoreReport;
   after?: ScoreReport;
+  liveEdit?: boolean;
+  buying?: boolean;
   onStart: () => void;
   onDownload: () => void;
   onReset: () => void;
+  onBuyPack: (sku: PackSku) => void;
 }
 
 export function FixPanel({
@@ -24,9 +29,12 @@ export function FixPanel({
   kind = "image",
   before,
   after,
+  liveEdit = false,
+  buying = false,
   onStart,
   onDownload,
   onReset,
+  onBuyPack,
 }: FixPanelProps) {
   return (
     <Card>
@@ -48,9 +56,12 @@ export function FixPanel({
             <p className="text-base/7 text-muted-foreground sm:text-sm/6">
               The score already ran in your browser. Sign in only if you want an AI edit that shifts the still.
             </p>
-            <Button onClick={onStart}>Fix this still</Button>
+            <TurnstileBox />
+            <Button onClick={onStart} disabled={buying}>
+              Fix this still
+            </Button>
             <p className="text-base/7 text-muted-foreground sm:text-sm/6">
-              {credits} free {credits === 1 ? "edit" : "edits"} left on this demo account.
+              {credits} {credits === 1 ? "edit" : "edits"} left.
             </p>
           </>
         ) : null}
@@ -67,9 +78,15 @@ export function FixPanel({
               You have used both free edits. Local checks stay free. Packs are £9 for 20 and £29
               for 80.
             </Alert>
-            <Button variant="secondary" disabled>
-              Buy a pack
-            </Button>
+            <TurnstileBox />
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button variant="secondary" disabled={buying} onClick={() => onBuyPack("pack_starter")}>
+                Buy starter £9 / 20
+              </Button>
+              <Button variant="secondary" disabled={buying} onClick={() => onBuyPack("pack_studio")}>
+                Buy studio £29 / 80
+              </Button>
+            </div>
           </>
         ) : null}
 
@@ -86,8 +103,9 @@ export function FixPanel({
               </div>
             </div>
             <Alert>
-              This preview is a stand-in until live edits are switched on. Live Gemini edits include
-              a SynthID watermark.
+              {liveEdit
+                ? "Gemini edits include a SynthID watermark."
+                : "This preview is a stand-in until live edits are switched on. Live Gemini edits include a SynthID watermark."}
             </Alert>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Button className="pl-2 pr-3" onClick={onDownload}>
@@ -110,4 +128,56 @@ export function FixPanel({
       </CardContent>
     </Card>
   );
+}
+
+type TurnstileApi = {
+  render: (el: HTMLElement, opts: { sitekey: string; callback: (token: string) => void }) => string;
+  remove: (id: string) => void;
+};
+
+function TurnstileBox() {
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!siteKey || !boxRef.current) {
+      return;
+    }
+    const host = window as unknown as { turnstile?: TurnstileApi; __szrTurnstileToken?: string };
+    let widgetId: string | undefined;
+    const render = () => {
+      if (!boxRef.current || !host.turnstile || widgetId) {
+        return;
+      }
+      widgetId = host.turnstile.render(boxRef.current, {
+        sitekey: siteKey,
+        callback: (token) => {
+          host.__szrTurnstileToken = token;
+        },
+      });
+    };
+    if (host.turnstile) {
+      render();
+    } else {
+      const existing = document.querySelector("script[data-szr-turnstile]");
+      const script = existing instanceof HTMLScriptElement ? existing : document.createElement("script");
+      script.dataset.szrTurnstile = "1";
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.addEventListener("load", render);
+      if (!existing) {
+        document.head.appendChild(script);
+      }
+    }
+    return () => {
+      if (widgetId && host.turnstile) {
+        host.turnstile.remove(widgetId);
+      }
+    };
+  }, [siteKey]);
+
+  if (!siteKey) {
+    return null;
+  }
+  return <div ref={boxRef} className="min-h-8" />;
 }

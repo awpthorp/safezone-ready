@@ -8,9 +8,13 @@ export async function requireTurnstile(c: Context<{ Bindings: ApiEnv }>, next: N
     return;
   }
 
-  const token = c.req.header("X-Turnstile-Token") ?? "";
+  if (!c.env.TURNSTILE_SECRET_KEY) {
+    await next();
+    return;
+  }
 
-  if (!token || !c.env.TURNSTILE_SECRET_KEY) {
+  const token = c.req.header("X-Turnstile-Token") ?? "";
+  if (!token) {
     return c.json(
       {
         error: "turnstile_required",

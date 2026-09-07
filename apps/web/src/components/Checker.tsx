@@ -4,7 +4,7 @@ import {
   type PlacementId,
   type ScoreReport,
 } from "@safezone-ready/safezone-specs";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FixPanel, type FixPhase } from "@/components/FixPanel";
 import { PreviewStage } from "@/components/preview/PreviewStage";
 import { ScoreRail } from "@/components/ScoreRail";
@@ -18,6 +18,18 @@ import {
   validateImageSize,
   validateVideoMeta,
 } from "@/lib/analyse";
+import {
+  ApiHttpError,
+  createCheckoutSession,
+  fetchJobOutput,
+  getMe,
+  googleAuthUrl,
+  pollJob,
+  startFixJob,
+  uploadMime,
+  uploadStill,
+  type PackSku,
+} from "@/lib/fixClient";
 import { createObjectUrl, loadVideo, revokeIfBlob } from "@/lib/media";
 import { placementFromSearch, platformDeepLinkLabel } from "@/lib/platform";
 import {
@@ -59,12 +71,48 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
   const [busyKind, setBusyKind] = useState<"image" | "video">("image");
   const [phase, setPhase] = useState<FixPhase>("idle");
   const [credits, setCredits] = useState(2);
+  const [liveEdit, setLiveEdit] = useState(false);
+  const [buying, setBuying] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const busyRef = useRef(false);
   const creativeRef = useRef<LoadedCreative | null>(null);
   const fixedRef = useRef<LoadedCreative | null>(null);
+  const fixTicket = useRef(0);
   creativeRef.current = creative;
   fixedRef.current = fixed;
+
+  const refreshCredits = useCallback(async () => {
+    const me = await getMe();
+    if (me) {
+      setCredits(me.credits);
+    }
+    return me;
+  }, []);
+
+  useEffect(() => {
+    void refreshCredits().catch(() => {
+      // Stay on the local checker if /api/me is down.
+    });
+  }, [refreshCredits]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const params = new URLSearchParams(window.location.search);
+    const checkout = params.get("checkout");
+    if (checkout !== "success" && checkout !== "cancel") {
+      return;
+    }
+    if (checkout === "success") {
+      void refreshCredits().catch((err) => {
+        setError(err instanceof Error ? err.message : "Could not refresh credits after checkout.");
+      });
+    }
+    params.delete("checkout");
+    const next = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
+    window.history.replaceState({}, "", next);
+  }, [refreshCredits]);
 
   const display = fixed ?? creative;
   const displayReport = display?.report;
@@ -89,6 +137,7 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
       setBusyKind(videoFile ? "video" : "image");
       setError(null);
       setFixed(null);
+      setLiveEdit(false);
       setPhase("idle");
       const url = createObjectUrl(file);
       try {
@@ -139,6 +188,7 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
       setBusyKind("image");
       setError(null);
       setFixed(null);
+      setLiveEdit(false);
       setPhase("idle");
       try {
         const sample = await canvasToImage(
@@ -169,31 +219,129 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
     if (!creative || creative.kind === "video") {
       return;
     }
-    if (credits <= 0) {
-      setPhase("paywall");
+    if (busyRef.current) {
       return;
     }
-    setPhase("auth");
-    await wait(700);
-    setPhase("running");
-    await wait(1100);
+    busyRef.current = true;
+    const ticket = ++fixTicket.current;
+    setError(null);
+    setLiveEdit(false);
     try {
-      const sample = await canvasToImage(drawFixedCreative);
+      if (credits <= 0) {
+        const me = await refreshCredits();
+        if (ticket !== fixTicket.current) {
+          return;
+        }
+        if (!me) {
+          setPhase("auth");
+          window.location.href = googleAuthUrl();
+          return;
+        }
+        if (me.credits <= 0) {
+          setPhase("paywall");
+          return;
+        }
+      }
+      setPhase("auth");
+      const me = await refreshCredits();
+      if (ticket !== fixTicket.current) {
+        return;
+      }
+      if (!me) {
+        window.location.href = googleAuthUrl();
+        return;
+      }
+      if (me.credits <= 0) {
+        setPhase("paywall");
+        return;
+      }
+      setPhase("running");
+      const blob = await fetch(creative.url).then((res) => res.blob());
+      const mime = uploadMime(blob, creative.fileName);
+      const { assetId } = await uploadStill(blob, mime);
+      if (ticket !== fixTicket.current) {
+        return;
+      }
+      const { jobId } = await startFixJob(assetId, [...DEFAULT_PLACEMENT_IDS]);
+      const job = await pollJob(jobId);
+      if (ticket !== fixTicket.current) {
+        return;
+      }
+      if (job.status !== "succeeded") {
+        await refreshCredits();
+        throw new ApiHttpError(
+          422,
+          job.failureCode ?? "model_failed",
+          "We could not complete that edit, so this credit has been returned.",
+        );
+      }
+      const output = await fetchJobOutput(jobId);
+      const url = URL.createObjectURL(output);
       try {
-        const { report } = analyseImage(sample.image, DEFAULT_PLACEMENT_IDS);
+        const image = await loadImage(url);
+        const { report } = analyseImage(image, DEFAULT_PLACEMENT_IDS);
+        if (ticket !== fixTicket.current) {
+          revokeIfBlob(url);
+          return;
+        }
         dropLoaded(fixedRef.current);
-        setFixed({ kind: "image", image: sample.image, url: sample.url, fileName: sample.fileName, report });
-        setCredits((n) => n - 1);
+        setFixed({
+          kind: "image",
+          image,
+          url,
+          fileName: "safezone-ready.png",
+          report,
+        });
+        setLiveEdit(true);
+        await refreshCredits();
         setPhase("done");
       } catch (err) {
-        revokeIfBlob(sample.url);
+        revokeIfBlob(url);
         throw err;
       }
     } catch (err) {
+      if (ticket !== fixTicket.current) {
+        return;
+      }
+      if (err instanceof ApiHttpError && err.status === 401) {
+        setPhase("auth");
+        window.location.href = googleAuthUrl();
+        return;
+      }
+      if (err instanceof ApiHttpError && (err.status === 402 || err.code === "insufficient_credits")) {
+        setCredits(0);
+        setPhase("paywall");
+        return;
+      }
       setError(err instanceof Error ? err.message : "The edit failed. Try another still.");
       setPhase("idle");
+    } finally {
+      if (ticket === fixTicket.current) {
+        busyRef.current = false;
+      }
     }
-  }, [creative, credits, dropLoaded]);
+  }, [creative, credits, dropLoaded, refreshCredits]);
+
+  const buyPack = useCallback(async (sku: PackSku) => {
+    setBuying(true);
+    setError(null);
+    try {
+      const me = await refreshCredits();
+      if (!me) {
+        window.location.href = googleAuthUrl();
+        return;
+      }
+      const { url } = await createCheckoutSession(sku);
+      window.location.href = url;
+    } catch (err) {
+      if (err instanceof ApiHttpError && err.status === 401) {
+        window.location.href = googleAuthUrl();
+        return;
+      }
+      setError(err instanceof Error ? err.message : "Could not start checkout.");
+      setBuying(false);
+    }
+  }, [refreshCredits]);
 
   const downloadFixed = useCallback(() => {
     if (!fixed || fixed.kind !== "image") {
@@ -206,12 +354,14 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
   }, [fixed]);
 
   const reset = useCallback(() => {
+    fixTicket.current += 1;
     dropLoaded(creativeRef.current);
     dropLoaded(fixedRef.current);
     creativeRef.current = null;
     fixedRef.current = null;
     setCreative(null);
     setFixed(null);
+    setLiveEdit(false);
     setPhase("idle");
     setError(null);
   }, [dropLoaded]);
@@ -324,20 +474,17 @@ export function Checker({ defaultPlacement }: { defaultPlacement: PlacementId })
             kind={creative.kind}
             phase={phase}
             credits={credits}
+            liveEdit={liveEdit}
+            buying={buying}
             before={creative.report}
             after={fixed?.report}
             onStart={() => void startFix()}
             onDownload={downloadFixed}
             onReset={reset}
+            onBuyPack={(sku) => void buyPack(sku)}
           />
         ) : null}
       </aside>
     </section>
   );
-}
-
-function wait(ms: number) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
 }

@@ -1,43 +1,30 @@
-import { runFixPipelineStub, type FixJobMessage } from "./pipeline";
+import { runFixPipeline, type FixJobMessage, type PipelineEnv } from "./pipeline";
 
-export interface WorkerEnv {
-  ENVIRONMENT: string;
-  GEMINI_MODEL_PRIMARY: string;
-  GEMINI_MODEL_ESCALATION: string;
-  GEMINI_API_BASE: string;
-  FIXES_ENABLED: string;
-  GEMINI_API_KEY?: string;
-  DB: D1Database;
-  ASSETS: R2Bucket;
-}
+export type WorkerEnv = PipelineEnv;
 
 export default {
   async queue(batch: MessageBatch<FixJobMessage>, env: WorkerEnv): Promise<void> {
-    if (env.FIXES_ENABLED === "false") {
-      for (const message of batch.messages) {
+    for (const message of batch.messages) {
+      try {
+        const result = await runFixPipeline(message.body, env);
         console.log(
           JSON.stringify({
-            event: "fix.killed",
+            event: result.status === "succeeded" ? "fix.succeeded" : "fix.failed",
             jobId: message.body.jobId,
+            status: result.status,
+            failureCode: result.failureCode ?? null,
           }),
         );
-        message.ack();
+      } catch {
+        console.log(
+          JSON.stringify({
+            event: "fix.failed",
+            jobId: message.body.jobId,
+            status: "failed",
+            failureCode: "model_failed",
+          }),
+        );
       }
-      return;
-    }
-
-    for (const message of batch.messages) {
-      const result = await runFixPipelineStub(message.body);
-      console.log(
-        JSON.stringify({
-          event: "fix.stub",
-          jobId: message.body.jobId,
-          status: result.status,
-          hasGeminiKey: Boolean(env.GEMINI_API_KEY),
-          primary: env.GEMINI_MODEL_PRIMARY,
-          escalation: env.GEMINI_MODEL_ESCALATION,
-        }),
-      );
       message.ack();
     }
   },
